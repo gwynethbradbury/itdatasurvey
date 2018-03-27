@@ -1,17 +1,14 @@
-ECIT Password Survey Application
+GDPR Data Surveyand Audit  Application
 ==================
-
-This application is written in [Flask](http://flask.pocoo.org);
-"Flask is a microframework for Python based on Werkzeug, Jinja 2 and good intentions."
 
 Purpose
 ------------------
-To survey and gather relevant user data on passwords and their usage.
+To survey and gather relevant user data tored on SoGE Infrastructure.
 
 
 Project Structure
 ------------------
-####Application Project Structure
+###Application Project Structure
 ```
 app
   ├── __init__.py
@@ -22,7 +19,6 @@ app
   ├── models.py
   ├── static
   │   └── (asset files: CSS/JS/images)
-  │       * managed 'mostly' by Bower
   ├── templates
   │   └── (HTML template files)
   └── views.py
@@ -30,16 +26,14 @@ manage.py
 config.py
 ```
 
-####Application Configuration
+###Application Configuration
  * `config.py` - will hold all configuration values for the application runtime
- * `.bowerrc` - instructs bower to install files in the specified location
- * `bower.json` - the project's Bower configuration file
 
 
 Getting Started
 ------------------
 
-#####Installing Packaged Dependencies
+####Installing Packaged Dependencies
 
 You are strongly encouraged to use a virtual environment for development, and [virtualenv wrapper](http://virtualenvwrapper.readthedocs.org/en/latest/) is the way to go.
 
@@ -52,7 +46,7 @@ Whether you use a virtualenv or not your first step is to install your Python de
 `requirements.txt` holds a record of all packaged Python dependencies. If you update or add any packages, please remember to run:
  * `$ pip freeze > requirements.txt`
 
-#####Configuring/Initializing the Database
+####Configuring/Initializing the Database
 
 Configuration specifications will come in a later update. For now these are the config variables that will be utilized.
  * `SQLALCHEMY_DATABASE_URI`
@@ -65,7 +59,7 @@ To initialize the database, run:<br>
 Running the App
 ------------------
 
-#####Development
+####Development
 To run the application in your development environment. After you initialize your database;
  * `$ python manage.py runserver`
 
@@ -76,7 +70,7 @@ $ python manage.py runserver
 * Restarting with reloader
 ```
 
-#####Production
+####Production
 In production the application uses `gunicorn`. The command to start the server is:
 ```
 # <vitualenv>/gunicorn --bind 127.0.0.1:5000 --workers 2 app:app --log-level=debug --log-file=$LOGFILE 2>>$LOGFILE --daemon
@@ -105,10 +99,3 @@ Done, without errors.
 ```
 
 
-Contributors
-------------------
-
-[Ryan Kuhl](https://github.com/rkk09c)<br>
-[Shiva Houshmand](https://github.com/shibba)<br>
-[Frank Valcarcel](https://github.com/frankv)<br>
-[Sai Prasad](https://github.com/saiprasadsetty)<br>
