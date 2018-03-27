@@ -8,17 +8,22 @@
     <div class="col-lg-12 well">
 
       <div class="page-header">
+          <h1>Survey on Personal Data</h1>
         <h2>Please answer the following questions</h2>
       </div>
 
       <div class="col-lg-10">
         <form method="POST" action="." class="form form-horizontal">
           {{ form.csrf_token }}
-
-          {{ render_field(form.gender) }}
-          {{ render_field(form.age) }}
-          {{ render_field(form.education)}}
-          {{ render_field(form.language, class="form-control")}}
+{#            {{ form.fields.__len__() }}#}
+{#            {% for f in form._fields %}#}
+{#            {{ render_field(f) }}#}
+{#            {% endfor %}#}
+          {{ render_field(form.has_data) }}
+{#          {{ render_field(form.gender) }}#}
+{#          {{ render_field(form.age) }}#}
+{#          {{ render_field(form.education)}}#}
+{#          {{ render_field(form.language, class="form-control")}}#}
 
           <div class="control-group">
             <label class="control-label"></label>

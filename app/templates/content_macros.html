@@ -1,0 +1,95 @@
+
+
+{% macro full_entry( entry ) %}
+    {% for tag in entry.topics %}
+        <a class="btn btn-sm btn-outline-tagcolour{{ (3 * tag.id + 1) % 20 + 1 }}" href="{{ app_path }}topics/{{ tag.id }}">{{ tag }}</a>
+    {% endfor %}
+
+    {{ entry.html_content }}
+    {{ entry_docs(entry) }}
+    <p>Created {{ entry.timestamp.strftime('%m/%d/%Y at %I:%M %p') }}</p>
+    This article has been viewed {{ entry.views }} times.
+
+    <p>
+    {% for tag in entry.tags %}
+        <a class="btn btn-sm btn-outline-tagcolour{{ (3 * tag.id + 2) % 20 + 1 }}" href="{{ app_path }}tags/{{ tag.id }}">{{ tag }}</a>
+    {% endfor %}
+
+
+    <form action="{{ url_for('detail', slug=entry.slug) }}"
+                      id="comment-form" method="post" role="addcomment">
+                  <div class="form-group">
+                    <input class="form-control" name="comment" placeholder="Comment..." aria-label="Comment" type="text" value="">
+                  </div>
+
+    </form>
+    <hr>
+    {% for c in entry.comments %}
+        {% if c.visible %}<p>
+            <b>{{ c.username }}</b>
+            {% if c.username==LDAPUser.uid_trim() or LDAPUser.uid_trim()=="cenv0594" %}<small><a href="{{ url_for('delete_comment', slug=entry.slug,comment_id = c.id) }}"><i>Delete comment</i></a></small>{% endif %}
+            {{ c.html_content }}
+            {{ c.created_on.strftime('%m/%d/%Y at %I:%M %p') }}
+            </p>
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro entry_docs(entry) %}
+    {% if entry.documents.count()>0 %}
+        <hr/>
+        <h4>Files</h4>
+        <ul>
+        {% for f in entry.documents.all() %}
+            {% if not f.is_image %}
+                <li>
+                    {% if f.caption=="" %}
+                        {{ f.filename }}
+                    {% else %}
+                        {{ f.caption }}
+                    {% endif %} -
+                    <a href="{{ url_for('get_doc', filename=f.filename) }}">view
+                    </a> -
+                    <a href="{{ url_for('download_doc', filename=f.filename) }}">download</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        </ul>
+        <hr/>
+    {% endif %}
+{% endmacro %}
+
+{% macro entries( entries ) %}
+
+    {% for entry in entries %}
+{#      {{ entry.rank() }}<br/>#}
+{#    {% if search %}#}
+{#      {% set entry = entry.entry %}#}
+{#    {% endif %}#}
+        {% if entry.published or LDAPUser.uid_trim()=='cenv0594' %}
+            <div class="card" >
+                <div class="card-body">
+                    <a href="{% if entry.published %}{{ url_for('detail', slug=entry.slug) }}{% else %}{{ url_for('edit', slug=entry.slug) }}{% endif %}">
+                        <h4>{{ entry.title }}{% if not entry.published %} (draft){% endif %}</h4></a>
+
+                    {% for tag in entry.topics %}
+                        <a class="btn btn-sm btn-outline-tagcolour{{ (3 * tag.id + 1) % 20 + 1 }}" href="{{ app_path }}topics/{{ tag.id }}">{{ tag }}</a>
+                    {% endfor %}
+                    </a>
+                    <p>{{entry.content[:100]|safe}}...<p>
+                    <p>Created {{ entry.timestamp.strftime('%m/%d/%Y at %I:%M %p') }}, {{ entry.comments.count() }} comments</p>
+
+                    <p>
+                    {% for tag in entry.tags %}
+                        <a class="btn btn-sm btn-outline-tagcolour{{ (3 * tag.id + 2) % 20 + 1 }}" href="{{ app_path }}tags/{{ tag.id }}">{{ tag }}</a>
+                    {% endfor %}</p>
+
+                </div>
+            </div>
+            <br/>
+        {% endif %}
+    {% else %}
+        <p>No entries have been created yet.</p>
+    {% endfor %}
+
+{% endmacro %}

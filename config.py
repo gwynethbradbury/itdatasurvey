@@ -17,7 +17,7 @@ SECRET_KEY = 'youshouldreplacethis'
 
 SQLALCHEMY_ECHO = True
 DATABASE_QUERY_TIMEOUT = 15
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + PROJECT_ROOT + '/%s.sqlite' % PROJECT
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:GTG24DDa@localhost/data_survey'
 
 MAIL_DEBUG = DEBUG
 MAIL_SERVER = 'smtp.gmail.com'

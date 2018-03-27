@@ -5,66 +5,67 @@
 	<div class="jumbotron">
 
 		{% if not g.user.s1 %}
-		<h1>Hello</h1>
+{#		<h1>Hello</h1>#}
+            <p>IT need your help to complete a survey on the data stored on SoGE infrastructure This is in line with new policy on data management (often referred to as GDPR).</p>
 		{% else %}
 		<h1>Welcome back.</h1>
 		{% endif %}
 
-		<p>Please complete the four surveys.</p>
+		<p>Please complete the two surveys.</p>
 
 	</div>
 
 	<div class="row">
 
-		<div class="col-md-3">
-			{% if not g.user.s1 %}
-				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_1')}}" role="button">Research Survey 1</a></p>
-			{% elif g.user.s1 %}
+		<div class="col-md-6">
+			{% if not s1 %}
+				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_1')}}" role="button">Personal Data Survey</a></p>
+			{% elif s1 %}
 				<a class="btn btn-primary btn-lg btn-block disabled" role="button">
-					<span class="glyphicon glyphicon-ok pull-left"></span>	Research Survey 1
+					<span class="glyphicon glyphicon-ok pull-left"></span>	Personal Data Survey
 				</a>
 				<br>
-				<p>Thanks for completing Survey 1.</p>
+				<p>Thanks for completing the Personal Data Survey.</p>
 			{% else %}
-			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Research Survey 1</a></p>
+			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Personal Data Survey</a></p>
 			{% endif %}
 		</div>
 
-		<div class="col-md-3">
-			{% if g.user.s1 and not g.user.s2%}
-				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">Research Survey 2</a></p>
-			{% elif g.user.s2 %}
+		<div class="col-md-6">
+			{% if s1 and not s2%}
+				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">Shared Space Data Survey</a></p>
+			{% elif s2 %}
 				<a class="btn btn-primary btn-lg btn-block disabled" role="button">
-					<span class="glyphicon glyphicon-ok pull-left"></span>	Research Survey 2
+					<span class="glyphicon glyphicon-ok pull-left"></span>	Shared Space Data Survey
 				</a>
 				<br>
-				<p>Thanks for completing Survey 2.</p>
+				<p>Thanks for completing the Shared Space Data Survey.</p>
 			{% else %}
-			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Research Survey 2</a></p>
+			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Shared Space Data Survey</a></p>
 			{% endif %}
 		</div>
 
-		<div class="col-md-3">
-			{% if g.user.s2 and not g.user.s3%}
-				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_3')}}" role="button">Research Survey 3</a></p>
-			{% elif g.user.s3 %}
-				<a class="btn btn-primary btn-lg btn-block disabled" role="button">
-					<span class="glyphicon glyphicon-ok pull-left"></span>	Research Survey 3
-				</a>
-				<br>
-				<p>Thanks for completing Survey 3.</p>
-			{% else %}
-			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Research Survey 3</a></p>
-			{% endif %}
-		</div>
-
-		<div class="col-md-3">
-			{% if g.user.s3 and not g.user.s4%}
-				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_4')}}" role="button">Research Survey 4</a></p>
-			{% else %}
-			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Research Survey 4</a></p>
-			{% endif %}
-		</div>
+{#		<div class="col-md-3">#}
+{#			{% if g.user.s2 and not g.user.s3%}#}
+{#				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_3')}}" role="button">Research Survey 3</a></p>#}
+{#			{% elif g.user.s3 %}#}
+{#				<a class="btn btn-primary btn-lg btn-block disabled" role="button">#}
+{#					<span class="glyphicon glyphicon-ok pull-left"></span>	Research Survey 3#}
+{#				</a>#}
+{#				<br>#}
+{#				<p>Thanks for completing Survey 3.</p>#}
+{#			{% else %}#}
+{#			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Research Survey 3</a></p>#}
+{#			{% endif %}#}
+{#		</div>#}
+{##}
+{#		<div class="col-md-3">#}
+{#			{% if g.user.s3 and not g.user.s4%}#}
+{#				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_4')}}" role="button">Research Survey 4</a></p>#}
+{#			{% else %}#}
+{#			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Research Survey 4</a></p>#}
+{#			{% endif %}#}
+{#		</div>#}
 
 	</div><!-- /.row -->
 

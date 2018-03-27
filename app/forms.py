@@ -52,6 +52,11 @@ class NewPass(Form):
 
 
 class Survey1Form(Form):
+
+    has_data = fields.RadioField('Do you store personal data on SoGE IT infrastructure?',
+        choices=[('Y', 'Yes'), ('N', 'No'), ('O', "I don't know")],
+        validators=[Required()], default=None)
+
     gender = fields.RadioField('What is your gender?',
         choices=[('M', 'Male'), ('F', 'Female'), ('O', 'I prefer not to answer')],
         validators=[Required()], default=None)
@@ -66,6 +71,7 @@ class Survey1Form(Form):
             ('O', 'Other')],
         validators=[Required()])
     language = fields.TextField('What is your native language', validators=[Required()])
+
 
 
 class Survey2Form(Form):
