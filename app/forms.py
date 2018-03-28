@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from flask_wtf import Form, fields#, validators, DataRequired, Email, Regexp
+import wtforms as fields
 from models import User
 from app import db
 
