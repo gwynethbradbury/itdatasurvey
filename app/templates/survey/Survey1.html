@@ -20,9 +20,22 @@
 {#            {{ render_field(f) }}#}
 {#            {% endfor %}#}
           {{ render_field(form.has_data) }}
-{#          {{ render_field(form.gender) }}#}
-{#          {{ render_field(form.age) }}#}
-{#          {{ render_field(form.education)}}#}
+          {{ render_field(form.alt_email) }}
+          {{ render_field(form.supply_media) }}
+          {{ render_field(form.file_size_estimate)}}
+          {{ render_field(form.file_size_final)}}
+          {{ render_field(form.format_name)}}
+          {{ render_field(form.use_constraints)}}
+          {{ render_field(form.public_access_constraints)}}
+          {{ render_field(form.process_status)}}
+          {{ render_field(form.lineage)}}
+          {{ render_field(form.experimental_design)}}
+          {{ render_field(form.collection_generation_transformation_methods)}}
+          {{ render_field(form.fieldwork_lab_instrumentation)}}
+          {{ render_field(form.analytical_methods)}}
+          {{ render_field(form.comments, class="form-control")}}
+
+
 {#          {{ render_field(form.language, class="form-control")}}#}
 
           <div class="control-group">

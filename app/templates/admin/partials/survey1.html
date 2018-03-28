@@ -12,13 +12,6 @@
       <p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('admin_survey2')}}" role="button">Shared Space Data Survey</a></p>
   </div>
 
-{#  <div class="col-md-3">#}
-{#      <p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('admin_survey3')}}" role="button">Research Survey 3</a></p>#}
-{#  </div>#}
-{##}
-{#  <div class="col-md-3">#}
-{#      <p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('admin_survey4')}}" role="button">Research Survey 4</a></p>#}
-{#  </div>#}
 
 </div>
 
@@ -34,22 +27,44 @@
   <table class="table table-bordered datatable" cellspacing="0" width="100%" style="background-color:#464545;">
     <thead>
       <tr>
-        <th>Email</th>
-        <th>Gender</th>
-        <th>Age</th>
-        <th>Education</th>
-        <th>Language</th>
+
+          <th>has_data</th>
+          <th>alt_email</th>
+          <th>supply_media</th>
+          <th>file_size_estimate</th>
+          <th>file_size_final</th>
+          <th>format_name</th>
+          <th>use_constraints</th>
+          <th>public_access_constraints</th>
+          <th>process_status</th>
+          <th>lineage</th>
+          <th>experimental_design</th>
+          <th>collection_generation_transformation_methods</th>
+          <th>fieldwork_lab_instrumentation</th>
+          <th>analytical_methods</th>
+          <th>comments</th>
+
       </tr>
     </thead>
 
     <tbody>
       {% for survey in surveys %}
       <tr>
-        <td>{{ survey.user.email }}</td>
-        <td>{{ survey.gender }}</td>
-        <td>{{ survey.age }}</td>
-        <td>{{ survey.education }}</td>
-        <td>{{ survey.language }}</td>
+          <td>{{ survey.has_data }}</td>
+          <td>{{ survey.alt_email }}</td>
+          <td>{{ survey.supply_media }}</td>
+          <td>{{ survey.file_size_estimate }}</td>
+          <td>{{ survey.file_size_final }}</td>
+          <td>{{ survey.format_name }}</td>
+          <td>{{ survey.use_constraints }}</td>
+          <td>{{ survey.public_access_constraints }}</td>
+          <td>{{ survey.process_status }}</td>
+          <td>{{ survey.lineage }}</td>
+          <td>{{ survey.experimental_design }}</td>
+          <td>{{ surveycollection_generation_transformation_methods }}</td>
+          <td>{{ survey.fieldwork_lab_instrumentation }}</td>
+          <td>{{ survey.analytical_methods }}</td>
+          <td>{{ survey.comments }}</td
       </tr>
       {% endfor %}
     </tbody>

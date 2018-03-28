@@ -7,8 +7,8 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask.ext.sqlalchemy import get_debug_queries
 
 from models import User, PersonalSurvey as Survey1, SharedSurvey as Survey2#, Survey3, Survey4
-from forms import LoginForm, RegistrationForm, Survey1Form, Survey2Form, Survey3Form
-from forms import Survey4Form, NewPass, ForgotPasswordForm
+from forms import Survey1Form, Survey2Form#, Survey3Form
+# from forms import Survey4Form
 from email import user_notification, forgot_password
 from config import DATABASE_QUERY_TIMEOUT
 from app import app, db, lm
@@ -35,7 +35,7 @@ def survey_1():
         form = Survey1Form(request.form)
 
         if form.validate_on_submit():
-            survey = Survey1()
+            survey = Survey1(current_user.uid_trim(),alt_email="not a real email")
             form.populate_obj(survey)
             # survey.user = g.user
             db.session.add(survey)
@@ -44,7 +44,7 @@ def survey_1():
             # g.user.lastSeen = date.today()
             db.session.commit()
             # logout_user()
-            return redirect(url_for('/'))
+            return redirect(url_for('index'))
 
         return render_template('survey/Survey1.html', title='Survey', form=form)
     else:

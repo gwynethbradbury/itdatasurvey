@@ -70,16 +70,42 @@ class PersonalSurvey(db.Model):
     username = db.Column(db.String(8), nullable=False)
     date = db.Column(db.Date)
     year = db.Column(db.Integer,nullable=False,default=2018)
+    alt_email = db.Column(db.String(100), nullable=False)
+
+    supply_media = db.Column(db.String(200), nullable=True)
+    file_size_estimate = db.Column(db.String(20), nullable=True)
+    file_size_final = db.Column(db.String(20), nullable=True)
+    format_name = db.Column(db.String(100), nullable=True)
+    use_constraints = db.Column(db.Text, nullable=True)
+    public_access_constraints = db.Column(db.Text,nullable=True)
+    process_status = db.Column(
+        db.Enum(
+            '1',
+            '2',
+            '3',
+            '4',
+            '5'
+        ),
+        nullable=False
+    )
+    process_steps_description = db.Column(db.Text,nullable=True)
+    lineage = db.Column(db.Text,nullable=True)
+    experimental_design = db.Column(db.Text,nullable=True)
+    collection_generation_transformation_methods = db.Column(db.Text,nullable=True)
+    collection_generation_transformation_methods = db.Column(db.Text,nullable=True)
+    fieldwork_lab_instrumentation = db.Column(db.Text,nullable=True)
+    analytical_methods = db.Column(db.Text,nullable=True)
+    comments = db.Column(db.Text,nullable=True)
 
     def __init__(
             self,
-            username,
+            username, alt_email,
             year=datetime.datetime.utcnow().year):
         self.date = datetime.datetime.utcnow()
         self.year = year
         self.username=username
 
-
+        self.alt_email = alt_email
 
     def get_id(self):
         return unicode(self.id)
