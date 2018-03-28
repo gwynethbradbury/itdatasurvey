@@ -23,5 +23,5 @@ app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=120)
 
 
-import views
+# import views
 import models
