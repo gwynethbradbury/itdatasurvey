@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.wtf import Form, fields, validators, DataRequired, Email, Regexp
+from flask_wtf import Form, fields, validators, DataRequired, Email, Regexp
 from models import User
 from app import db
-
 
 # def validate_login(form, field):
 #     user = form.get_user()
