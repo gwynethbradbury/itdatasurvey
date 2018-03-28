@@ -1,7 +1,7 @@
 
 *.pyc
 *.log
-
+config.py
 .idea
 components
 node_modules
