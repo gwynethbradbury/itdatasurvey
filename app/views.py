@@ -6,9 +6,8 @@ from flask import url_for, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
-from models import User, PersonalSurvey as Survey1, SharedSurvey as Survey2#, Survey3, Survey4
-from forms import Survey1Form, Survey2Form#, Survey3Form
-# from forms import Survey4Form
+from models import PersonalSurvey as Survey1, SharedSurvey as Survey2
+from forms import Survey1Form, Survey2Form
 from email import user_notification, forgot_password
 from config import DATABASE_QUERY_TIMEOUT
 from app import app, db, lm
@@ -37,13 +36,9 @@ def survey_1():
         if form.validate_on_submit():
             survey = Survey1(current_user.uid_trim(),alt_email="not a real email")
             form.populate_obj(survey)
-            # survey.user = g.user
             db.session.add(survey)
 
-            # g.user.s1 = True
-            # g.user.lastSeen = date.today()
             db.session.commit()
-            # logout_user()
             return redirect(url_for('index'))
 
         return render_template('survey/Survey1.html', title='Survey', form=form)
@@ -55,22 +50,20 @@ def survey_1():
 # @login_required
 def survey_2():
     g.user = current_user
-    if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] is not False \
-            and Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] is False:
+    # survey2 can be done a number of times
+    if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]:#  \
+            # and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
 
         form = Survey2Form(request.form)
 
         if form.validate_on_submit():
-            survey = Survey2()
+            survey = Survey2(current_user.uid_trim(),alt_email="not a real email")
             form.populate_obj(survey)
-            # survey.user = g.user
             db.session.add(survey)
 
-            # g.user.s2 = True
-            # g.user.lastSeen = date.today()
             db.session.commit()
-            logout_user()
-            return redirect(url_for('logouthtml'))
+            # logout_user()
+            return redirect(url_for('index'))
 
         return render_template('survey/Survey2.html', title='Survey', form=form)
     else:
@@ -208,34 +201,18 @@ def index():
     user = current_user
     if user.has_role('superusers'):
         return redirect(url_for('admin'))
+    survey2_done,survey2_details = Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
     return render_template("index.html", title="Home", user=user,
                            s1=Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0],
-                           s2=Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0])
-
-@app.route('/consent/')
-def consent():
-    return render_template('consent.html', title="Consent")
+                           s2=survey2_done,
+                           s2_details = survey2_details)
 
 
-@app.route('/logouthtml/')
-def logouthtml():
-    return render_template('logout.html', title="Logout")
-
-
-@lm.user_loader
-def load_user(id):
-    return User.query.get(int(id))
 
 
 @app.before_request
 def before_request():
     g.user = current_user
-
-
-# @app.route('/logout')
-# def logout():
-#     logout_user()
-#     return redirect(url_for('index'))
 
 
 @app.errorhandler(404)
@@ -269,7 +246,7 @@ def flash_errors(form):
 # @login_required
 # @admin_required
 def admin():
-    users = User.query.filter_by(role=0)
+    users = []#User.query.filter_by(role=0)
     return render_template('admin/index.html', title="Admin", users=users)
 
 
@@ -288,18 +265,3 @@ def admin_survey2():
     surveys = Survey2.query.all()
     return render_template('admin/partials/survey2.html', title='Admin Survey-2', surveys=surveys)
 
-
-@app.route('/admin_survey3/')
-# @login_required
-# @admin_required
-def admin_survey3():
-    surveys = Survey3.query.all()
-    return render_template('admin/partials/survey3.html', title='Admin Survey-3', surveys=surveys)
-
-
-@app.route('/admin_survey4/')
-# @login_required
-# @admin_required
-def admin_survey4():
-    surveys = Survey4.query.all()
-    return render_template('admin/partials/survey4.html', title='Admin Survey-4', surveys=surveys)

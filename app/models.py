@@ -12,57 +12,57 @@ ROLE_USER = 0
 ROLE_ADMIN = 1
 
 
-class User(UserMixin, CRUDMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True, unique=True)
-    userid = db.Column(db.String(255), unique=True)
-    email = db.Column(db.String(255), unique=True)
-    password = db.Column(db.String(20))
-    oldPassword = db.Column(db.String(20))
-    changedPass = db.Column(db.Boolean)
-    role = db.Column(db.SmallInteger, default=ROLE_USER)
-    s1 = db.Column(db.Boolean)
-    s2 = db.Column(db.Boolean)
-    s3 = db.Column(db.Boolean)
-    s4 = db.Column(db.Boolean)
-    lastSeen = db.Column(db.String(255))
-
-    def __init__(
-            self,
-            email=None,
-            userid=None,
-            password=None,
-            oldPassword=None,
-            changedPass=False,
-            s1=False,
-            s2=False,
-            s3=False,
-            s4=False,
-            role=None):
-        self.email = email
-        self.userid = userid
-        self.password = password
-        self.oldPassword = oldPassword
-        self.changedPass = changedPass
-        self.s1 = s1
-        self.s2 = s2
-        self.s3 = s3
-        self.s4 = s4
-        self.role = role
-
-    def is_admin(self):
-        if self.role == 1:
-            return True
-        else:
-            return False
-
-    def is_active(self):
-        return True
-
-    def get_id(self):
-        return unicode(self.id)
-
-    def __repr__(self):
-        return '<User %r>' % (self.email)
+# class User(UserMixin, CRUDMixin, db.Model):
+#     id = db.Column(db.Integer, primary_key=True, unique=True)
+#     userid = db.Column(db.String(255), unique=True)
+#     email = db.Column(db.String(255), unique=True)
+#     password = db.Column(db.String(20))
+#     oldPassword = db.Column(db.String(20))
+#     changedPass = db.Column(db.Boolean)
+#     role = db.Column(db.SmallInteger, default=ROLE_USER)
+#     s1 = db.Column(db.Boolean)
+#     s2 = db.Column(db.Boolean)
+#     s3 = db.Column(db.Boolean)
+#     s4 = db.Column(db.Boolean)
+#     lastSeen = db.Column(db.String(255))
+#
+#     def __init__(
+#             self,
+#             email=None,
+#             userid=None,
+#             password=None,
+#             oldPassword=None,
+#             changedPass=False,
+#             s1=False,
+#             s2=False,
+#             s3=False,
+#             s4=False,
+#             role=None):
+#         self.email = email
+#         self.userid = userid
+#         self.password = password
+#         self.oldPassword = oldPassword
+#         self.changedPass = changedPass
+#         self.s1 = s1
+#         self.s2 = s2
+#         self.s3 = s3
+#         self.s4 = s4
+#         self.role = role
+#
+#     def is_admin(self):
+#         if self.role == 1:
+#             return True
+#         else:
+#             return False
+#
+#     def is_active(self):
+#         return True
+#
+#     def get_id(self):
+#         return unicode(self.id)
+#
+#     def __repr__(self):
+#         return '<User %r>' % (self.email)
 
 
 class PersonalSurvey(db.Model):
@@ -71,6 +71,7 @@ class PersonalSurvey(db.Model):
     date = db.Column(db.Date)
     year = db.Column(db.Integer,nullable=False,default=2018)
     alt_email = db.Column(db.String(100), nullable=False)
+    has_data = db.Column(db.Enum('Y','N'), default=True)
 
     supply_media = db.Column(db.String(200), nullable=True)
     file_size_estimate = db.Column(db.String(20), nullable=True)
@@ -104,6 +105,7 @@ class PersonalSurvey(db.Model):
         self.date = datetime.datetime.utcnow()
         self.year = year
         self.username=username
+        self.has_data=False
 
         self.alt_email = alt_email
 
@@ -128,26 +130,94 @@ class SharedSurvey(db.Model):
     username = db.Column(db.String(8), nullable=False)
     date = db.Column(db.Date)
     year = db.Column(db.Integer,nullable=False,default=2018)
+    alt_email = db.Column(db.String(100), nullable=False)
+    has_data = db.Column(db.Enum('Y','N'), default=True)
+
+    group = db.Column(db.Enum('15_20deg_water_resources',
+                              'arve',
+                              'beta-diversity',
+                              'carina',
+                              'clarify',
+                              'ComputationalScience',
+                              'do4models',
+                              'EcosystemsLab_TLS',
+                              'enso_flavours',
+                              'fennec',
+                              'gem',
+                              'ghm',
+                              'gwava',
+                              'hiasa',
+                              'impala',
+                              'leaf-gpu',
+                              'leap',
+                              'marius',
+                              'mistral',
+                              'mooredrought',
+                              'okvbasin_sdm',
+                              'pollcurb',
+                              'reach',
+                              'river-routing',
+                              'seviri_dust',
+                              'sfp-datascience',
+                              'soge_routines',
+                              'titan',
+                              'tnc',
+                              'umfula',
+                              'weather_attribution',
+                              'Other'
+                              ), nullable=False
+        )
+    other_group=db.Column(db.String(20),nullable=True)
+
+    supply_media = db.Column(db.String(200), nullable=True)
+    file_size_estimate = db.Column(db.String(20), nullable=True)
+    file_size_final = db.Column(db.String(20), nullable=True)
+    format_name = db.Column(db.String(100), nullable=True)
+    use_constraints = db.Column(db.Text, nullable=True)
+    public_access_constraints = db.Column(db.Text, nullable=True)
+    process_status = db.Column(
+        db.Enum(
+            '1',
+            '2',
+            '3',
+            '4',
+            '5'
+        ),
+        nullable=False
+    )
+    process_steps_description = db.Column(db.Text, nullable=True)
+    lineage = db.Column(db.Text, nullable=True)
+    experimental_design = db.Column(db.Text, nullable=True)
+    collection_generation_transformation_methods = db.Column(db.Text, nullable=True)
+    collection_generation_transformation_methods = db.Column(db.Text, nullable=True)
+    fieldwork_lab_instrumentation = db.Column(db.Text, nullable=True)
+    analytical_methods = db.Column(db.Text, nullable=True)
+    comments = db.Column(db.Text, nullable=True)
+
 
     def __init__(
             self,
-            username,
+            username, alt_email,
             year=datetime.datetime.utcnow().year):
         self.date = datetime.datetime.utcnow()
         self.year = year
         self.username=username
+        self.group='Other'
+        self.has_data=False
+
 
     def get_id(self):
         return unicode(self.id)
 
+
     @staticmethod
     def has_been_done_by(username, year=None):
 
-        q= PersonalSurvey.query.filter(PersonalSurvey.username==username)
+        q= SharedSurvey.query.filter(SharedSurvey.username==username)
         if year:
-            q=q.filter(PersonalSurvey.year==year)
+            q=q.filter(SharedSurvey.year==year)
 
-        if q.count>0:
+        if q.count()>0:
             return True,q.all()
 
         return False,[]

@@ -2,53 +2,80 @@
 
 {% extends "base.html" %}
 
+{% block additionalscripts %}
+    <script>
+        $(function(){
+        $(":radio[value=N]").click(function(){
+            var isVisible = $( ".further-fields" ).is( ":visible" );
+            if(isVisible==true)
+                $('.further-fields').toggle();
+        });
+
+        $(":radio[value=Y]").click(function(){
+            var isVisible = $( ".further-fields" ).is( ":visible" );
+            if(isVisible==false)
+                $('.further-fields').toggle();
+        });
+        });
+    </script>
+{% endblock %}
+
 {% block content%}
 
-  <div class="row">
-    <div class="col-lg-12 well">
+    <div class="row">
+        <div class="col-lg-12 well">
 
-      <div class="page-header">
-          <h1>Survey on Personal Data</h1>
-        <h2>Please answer the following questions</h2>
-      </div>
+            <div class="page-header">
+                <h1>Survey on Personal Data</h1>
+                <h2>Please answer the following questions</h2>
+            </div>
 
-      <div class="col-lg-10">
-        <form method="POST" action="." class="form form-horizontal">
-          {{ form.csrf_token }}
-{#            {{ form.fields.__len__() }}#}
-{#            {% for f in form._fields %}#}
-{#            {{ render_field(f) }}#}
-{#            {% endfor %}#}
-          {{ render_field(form.has_data) }}
-          {{ render_field(form.alt_email) }}
-          {{ render_field(form.supply_media) }}
-          {{ render_field(form.file_size_estimate)}}
-          {{ render_field(form.file_size_final)}}
-          {{ render_field(form.format_name)}}
-          {{ render_field(form.use_constraints)}}
-          {{ render_field(form.public_access_constraints)}}
-          {{ render_field(form.process_status)}}
-          {{ render_field(form.lineage)}}
-          {{ render_field(form.experimental_design)}}
-          {{ render_field(form.collection_generation_transformation_methods)}}
-          {{ render_field(form.fieldwork_lab_instrumentation)}}
-          {{ render_field(form.analytical_methods)}}
-          {{ render_field(form.comments, class="form-control")}}
+            <div class="col-lg-10">
+                <form method="POST" action="." class="form form-horizontal">
 
 
-{#          {{ render_field(form.language, class="form-control")}}#}
 
-          <div class="control-group">
-            <label class="control-label"></label>
-              <div class="controls">
-                <button type="submit" id="submit" class="btn btn-primary">Submit</button>
-              </div>
-          </div>
+                    <div class="form-group">
+                        <label class="control-label" for="has_data">Do you store personal data on SoGE IT infrastructure?</label><br>
+                    {#                <ul id="has_data">#}
+                        <input id="has_data-0" name="has_data" type="radio" value="Y" checked> <label for="has_data-0">Yes</label>
+                        <input id="has_data-1" name="has_data" type="radio" value="N"> <label for="has_data-1">No</label>
+                        <a href="">I don't know</a>
+                    {#                </ul>#}
+                    </div>
 
-        </form>
-      </div>
 
+                    {{ form.csrf_token }}
+                    <div class="further-fields">
+                        {{ render_field(form.alt_email) }}
+                        {{ render_field(form.supply_media) }}
+                        {{ render_field(form.file_size_estimate)}}
+                        {{ render_field(form.file_size_final)}}
+                        {{ render_field(form.format_name)}}
+                        {{ render_field(form.use_constraints)}}
+                        {{ render_field(form.public_access_constraints)}}
+                        {{ render_field(form.process_status)}}
+                        {{ render_field(form.lineage)}}
+                        {{ render_field(form.experimental_design)}}
+                        {{ render_field(form.collection_generation_transformation_methods)}}
+                        {{ render_field(form.fieldwork_lab_instrumentation)}}
+                        {{ render_field(form.analytical_methods)}}
+                        {{ render_field(form.comments, class="form-control")}}
+                    </div>
+
+        {#          {{ render_field(form.language, class="form-control")}}#}
+
+                    <div class="control-group">
+                        <label class="control-label"></label>
+                        <div class="controls">
+                        <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
     </div>
-  </div>
 
 {% endblock %}
