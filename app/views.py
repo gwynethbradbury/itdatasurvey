@@ -6,7 +6,7 @@ from flask import url_for, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
-from models import PersonalSurvey as Survey1, SharedSurvey as Survey2
+from models import PersonalSurvey as Survey1, SharedSurvey as Survey2, SharedSpace
 from forms import Survey1Form, Survey2Form
 from email import user_notification, forgot_password
 from config import DATABASE_QUERY_TIMEOUT
@@ -16,6 +16,8 @@ from decorators import admin_required
 from datetime import date
 import uuid
 import datetime
+
+import wtforms as fields
 
 
 from auth.iaasldap import LDAPUser as LDAPUser
@@ -50,6 +52,56 @@ def survey_1():
 # @login_required
 def survey_2():
     g.user = current_user
+
+    # get folders for which this user is a member
+    # todo: and for which a survey has not been done this year
+    folders = SharedSpace.query.filter_by(PI_username=current_user.uid_trim())
+    choices=[]
+    for f in folders:
+        found=1
+        for s in f.surveys:
+            if s.year == datetime.datetime.utcnow().year:
+                found=0 #so dont include this one
+                break
+        if found:
+            choices.append(f.folder_name)
+
+    # # groups
+    # group = fields.SelectField('Group name',
+    #                             choices=[('15_20deg_water_resources','15_20deg_water_resources'),
+    #                                      ('arve','arve'),
+    #                                      ('beta-diversity','beta-diversity'),
+    #                                      ('carina','carina'),
+    #                                      ('clarify','clarify'),
+    #                                      ('ComputationalScience','ComputationalScience'),
+    #                                      ('do4models','do4models'),
+    #                                      ('EcosystemsLab_TLS','EcosystemsLab_TLS'),
+    #                                      ('enso_flavours','enso_flavours'),
+    #                                      ('fennec','fennec'),
+    #                                      ('gem','gem'),
+    #                                      ('ghm','ghm'),
+    #                                      ('gwava','gwava'),
+    #                                      ('hiasa','hiasa'),
+    #                                      ('impala','impala'),
+    #                                      ('leaf-gpu','leaf-gpu'),
+    #                                      ('leap','leap'),
+    #                                      ('marius','marius'),
+    #                                      ('mistral','mistral'),
+    #                                      ('mooredrought','mooredrought'),
+    #                                      ('okvbasin_sdm','okvbasin_sdm'),
+    #                                      ('pollcurb','pollcurb'),
+    #                                      ('reach','reach'),
+    #                                      ('river-routing','river-routing'),
+    #                                      ('seviri_dust','seviri_dust'),
+    #                                      ('sfp-datascience','sfp-datascience'),
+    #                                      ('soge_routines','soge_routines'),
+    #                                      ('titan','titan'),
+    #                                      ('tnc','tnc'),
+    #                                      ('umfula','umfula'),
+    #                                      ('weather_attribution','weather_attribution'),
+    #                                      ('Other','Other')])
+
+
     # survey2 can be done a number of times
     if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]:#  \
             # and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
@@ -59,13 +111,15 @@ def survey_2():
         if form.validate_on_submit():
             survey = Survey2(current_user.uid_trim(),alt_email="not a real email")
             form.populate_obj(survey)
+            survey.group = request.form.get('group_name')
+            survey.shared_space_id = SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).first().id
             db.session.add(survey)
 
             db.session.commit()
             # logout_user()
             return redirect(url_for('index'))
 
-        return render_template('survey/Survey2.html', title='Survey', form=form)
+        return render_template('survey/Survey2.html', title='Survey', form=form,groupfield=choices)
     else:
         return redirect(url_for('index'))
 

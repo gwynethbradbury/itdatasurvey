@@ -169,6 +169,20 @@ class SharedSurvey(db.Model):
         )
     other_group=db.Column(db.String(20),nullable=True)
 
+    shared_space_id = db.Column(
+        db.Integer,
+        db.ForeignKey('shared_space.id'),
+        nullable=False
+    )
+    shared_space = db.relationship(
+        'SharedSpace',
+        backref=db.backref(
+            'surveys',
+            lazy='dynamic'
+        )
+    )
+
+
     supply_media = db.Column(db.String(200), nullable=True)
     file_size_estimate = db.Column(db.String(20), nullable=True)
     file_size_final = db.Column(db.String(20), nullable=True)
@@ -221,6 +235,17 @@ class SharedSurvey(db.Model):
             return True,q.all()
 
         return False,[]
+
+class SharedSpace(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    PI_username = db.Column(db.String(8), nullable=False)
+    folder_name = db.Column(db.String(30), nullable=False)
+    storage_type = db.Column(db.Enum('linux','windows'), nullable=True)
+
+    def __init__(self,piname,fname,storagetype):
+        self.PI_username = piname
+        self.folder_name = fname
+        self.storage_type = storagetype
 
 # class Survey3(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

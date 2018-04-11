@@ -46,7 +46,20 @@
                     {{ form.csrf_token }}
 
                     <div class="further-fields">
-                        {{ render_field(form.group) }}
+
+                        <div class="form-group">
+                            <label class="control-label" for="group_name">Group folder</label><br>
+                            <select id="group_name" name="group_name">
+                                <option value="-">-</option>
+                                {% for g in groupfield %}
+                                    <option value="{{ g }}">{{ g }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+
+{#                        {{ render_field(groupfield) }}#}
+
                         {{ render_field(form.other_group) }}
                         {{ render_field(form.alt_email) }}
 
