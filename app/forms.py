@@ -217,3 +217,8 @@ class Survey2Form(Form):
     # Comments
     comments = fields.TextAreaField('Any further comments:')
 
+class ConfirmACLForm(Form):
+
+    is_acl_correct = fields.RadioField('Is this list of users correct?',
+        choices=[('Y', 'Yes'), ('N', 'No'), ('O', 'Not sure')])
+

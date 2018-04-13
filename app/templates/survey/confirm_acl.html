@@ -1,0 +1,57 @@
+{% from "macro.html" import render_field %}
+
+{% extends "base.html" %}
+
+{% block additionalscripts %}
+    <script>
+        $(function(){
+        $(":radio[value=N]").click(function(){
+            var isVisible = $( ".further-fields" ).is( ":visible" );
+            if(isVisible==true)
+                $('.further-fields').toggle();
+        });
+
+        $(":radio[value=Y]").click(function(){
+            var isVisible = $( ".further-fields" ).is( ":visible" );
+            if(isVisible==false)
+                $('.further-fields').toggle();
+        });
+        });
+    </script>
+{% endblock %}
+
+{% block content%}
+
+    <div class="row">
+        <div class="col-lg-12 well">
+
+            <div class="page-header">
+                <h2>The following users have access to this folder:</h2>
+            </div>
+            <ul>
+                {% for u in users %}
+                <li>{{ u.get_fullname() }}</li>
+                {% endfor %}
+            </ul>
+
+            <div class="col-lg-10">
+                <form method="POST" action="{{ url_for('confirm_ACL', sharedspace_id=sharedspace.id) }}" class="form form-horizontal">
+
+
+
+                        {{ render_field(form.is_acl_correct) }}
+
+
+                    <div class="control-group">
+                      <label class="control-label"></label>
+                      <div class="controls">
+                        <button type="submit" id="submit" class="btn btn-primary">Submit</button>
+                      </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -241,11 +241,23 @@ class SharedSpace(db.Model):
     PI_username = db.Column(db.String(8), nullable=False)
     folder_name = db.Column(db.String(30), nullable=False)
     storage_type = db.Column(db.Enum('linux','windows'), nullable=True)
+    is_acl_correct = db.Column(db.Boolean,nullable=True)
+
+    def most_recent_year(self):
+        surveys = SharedSurvey.query.filter_by(shared_space_id=self.id)
+        yr=0
+        for s in surveys:
+            if s.year>yr:
+                yr=s.year
+        return yr
 
     def __init__(self,piname,fname,storagetype):
         self.PI_username = piname
         self.folder_name = fname
         self.storage_type = storagetype
+
+    def __str__(self):
+        return self.folder_name
 
 # class Survey3(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
