@@ -182,7 +182,7 @@ def information():
 def index():
     user = current_user
     if user.has_role('superusers'):
-        return redirect(url_for('admin'))
+        return redirect('/admin')
     survey2_done,survey2_details = Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
     return render_template("index.html", title="Home", user=user,
                            s1=Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0],

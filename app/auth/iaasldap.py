@@ -133,7 +133,7 @@ class LDAPUser():
         uid = self.uid_trim()
         groups = ['all_users']
         if ldapconfig.test:
-            return[]
+            # return[]
             groups.append("superusers")
             # groups.append("onlinelrn")
             return groups
