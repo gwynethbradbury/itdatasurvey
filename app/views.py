@@ -42,6 +42,12 @@ def survey_1():
 
             db.session.commit()
             return redirect(url_for('index'))
+        elif request.form.get('has_data')=='N':
+            survey = Survey1(current_user.uid_trim(), alt_email="none required")
+            db.session.add(survey)
+
+            db.session.commit()
+            return redirect(url_for('index'))
 
         return render_template('survey/Survey1.html', title='Survey', form=form)
     else:

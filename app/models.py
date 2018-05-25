@@ -143,7 +143,7 @@ class PersonalSurvey(db.Model):
             '4',
             '5'
         ),
-        nullable=False
+        nullable=True
     )
     process_steps_description = db.Column(db.Text,nullable=True)
     lineage = db.Column(db.Text,nullable=True)
@@ -162,7 +162,6 @@ class PersonalSurvey(db.Model):
         self.year = year
         self.username=username
         self.has_data=False
-
         self.alt_email = alt_email
 
     def get_id(self):
