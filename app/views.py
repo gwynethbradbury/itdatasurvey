@@ -6,8 +6,8 @@ from flask import url_for, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
-from models import PersonalSurvey as Survey1, SharedSurvey as Survey2, SharedSpace
-from forms import Survey1Form, Survey2Form, ConfirmACLForm
+from models import PersonalSurvey as Survey1, SharedSurvey as Survey2, SharedSpace, WebhostingSurvey as Survey3, Website
+from forms import Survey1Form, Survey2Form, Survey3Form, ConfirmACLForm
 from email import user_notification, forgot_password
 from config import DATABASE_QUERY_TIMEOUT
 from app import app, db, lm
@@ -55,16 +55,17 @@ def survey_2():
 
     # get folders for which this user is a member
     # todo: and for which a survey has not been done this year
-    folders = SharedSpace.query.filter_by(PI_username=current_user.uid_trim())
+    folders = SharedSpace.query.filter_by(PI_username=current_user.uid_trim()).all()
     choices=[]
     for f in folders:
         found=1
-        for s in f.surveys:
+        for s in f.surveys.all():
             if s.year == datetime.datetime.utcnow().year:
                 found=0 #so dont include this one
                 break
         if found:
             choices.append(f.folder_name)
+    choices.append('Other')
 
 
     # # groups
@@ -113,15 +114,78 @@ def survey_2():
             survey = Survey2(current_user.uid_trim(),alt_email="not a real email")
             form.populate_obj(survey)
             survey.group = request.form.get('group_name')
-            sharedspace = SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).first()
+
+            if SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).count()==0:
+                sharedspace = SharedSpace(current_user.uid_trim(),request.form.get('other_group'),request.form.get('linux_or_windows'))
+                db.session.add(sharedspace)
+                db.session.commit()
+            else:
+                sharedspace = SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).first()
             survey.shared_space_id = sharedspace.id
             db.session.add(survey)
 
             db.session.commit()
 
             return redirect(url_for('confirm_ACL',sharedspace_id=sharedspace.id))
+        elif request.form.get('has_data')=='N':
+            survey = Survey2(current_user.uid_trim(), alt_email="none required")
+            db.session.add(survey)
+
+            db.session.commit()
+            return redirect(url_for('index'))
 
         return render_template('survey/Survey2.html', title='Survey', form=form,groupfield=choices)
+    else:
+        return redirect(url_for('index'))
+
+
+@app.route('/survey_3/', methods=['GET', 'POST'])
+# @login_required
+def survey_3():
+    g.user = current_user
+
+    # get folders for which this user is a member
+    # todo: and for which a survey has not been done this year
+    sites = Website.query.filter_by(PI_username=current_user.uid_trim()).all()
+    choices=[]
+    for f in sites:
+        found=1
+        for s in f.surveys.all():
+            if s.year == datetime.datetime.utcnow().year:
+                found=0 #so dont include this one
+                break
+        if found:
+            choices.append(f.site_name)
+    choices.append('Other')
+
+    if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] \
+            and Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]:
+
+        form = Survey3Form(request.form)
+
+        if form.validate_on_submit():
+            survey = Survey3(current_user.uid_trim(),alt_email="not a real email")
+            form.populate_obj(survey)
+            survey.site = request.form.get('site_name')
+            if Website.query.filter_by(site_name=request.form.get('site_name')).count()==0:
+                website = Website(current_user.uid_trim(),request.form.get('other_site'),request.form.get('url'))
+                db.session.add(website)
+                db.session.commit()
+            else:
+                website = Website.query.filter_by(site_name=request.form.get('site_name')).first()
+            survey.website_id = website.id
+            db.session.add(survey)
+
+            db.session.commit()
+            return redirect(url_for('index'))
+        elif request.form.get('has_site')=='N':
+            survey = Survey3(current_user.uid_trim(), alt_email="none required")
+            db.session.add(survey)
+
+            db.session.commit()
+            return redirect(url_for('index'))
+
+        return render_template('survey/Survey3.html', title='Survey', form=form,sitefield=choices)
     else:
         return redirect(url_for('index'))
 
@@ -183,11 +247,16 @@ def index():
     user = current_user
     # if user.has_role('superusers'):
     #     return redirect('admin/')
+    survey1_done,survey1_details = Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
     survey2_done,survey2_details = Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
+    survey3_done,survey3_details = Survey3.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
     return render_template("index.html", title="Home", user=user,
-                           s1=Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0],
+                           s1=survey1_done,
+                           s1_year=datetime.datetime.utcnow().year,
                            s2=survey2_done,
-                           s2_details = survey2_details)
+                           s2_details = survey2_details,
+                           s3=survey3_done,
+                           s3_details = survey3_details)
 
 
 
@@ -272,31 +341,24 @@ from flask_admin.contrib.sqla import ModelView
 
 class MyAdminIndexView(AdminIndexView):
     def is_accessible(self):
-        return True
-        # if hasattr(current_user,'email'):
-        #     if current_user.email == 'default' and \
-        #             current_user.is_authenticated:
-        #         return True
-        # return False
+        if current_user.has_role('superusers'):
+            return True
+        return False
 
-    # def inaccessible_callback(self, name, **kwargs):
-    #     # redirect to login page if user doesn't have access
-    #     return redirect(url_for('signup', next=request.url))
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('index'))
 
 
 class MyModelView(ModelView):
-
     def is_accessible(self):
-        return True
-        # if hasattr(current_user,'email'):
-        #     if current_user.email == 'default' and \
-        #             current_user.is_authenticated:
-        #         return True
-        # return False
+        if current_user.has_role('superusers'):
+            return True
+        return False
 
-    # def inaccessible_callback(self, name, **kwargs):
-    #     # redirect to login page if user doesn't have access
-    #     return redirect(url_for('signup', next=request.url))
+    def inaccessible_callback(self, name, **kwargs):
+        # redirect to login page if user doesn't have access
+        return redirect(url_for('index'))
 
 
 

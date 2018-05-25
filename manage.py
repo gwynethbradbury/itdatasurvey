@@ -3,8 +3,12 @@
 from flask.ext.script import Manager
 from app import app, db
 
-from app.models import PersonalSurvey,SharedSurvey,SharedSpace
+from app.models import PersonalSurvey,SharedSurvey,SharedSpace,Website
 
+from flask.ext.migrate import Migrate, MigrateCommand
+
+# ALEMBIC
+migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_option('-c', '--config', dest='config', required=False)
 
@@ -14,6 +18,7 @@ manager.add_option('-c', '--config', dest='config', required=False)
 
 @manager.command
 def initdb():
+    pass
     """initialize database"""
     db.drop_all()
     db.create_all()
@@ -49,13 +54,40 @@ def initdb():
                ('tnc', 'cenv0594'),
                ('umfula', 'cenv0594'),
                ('weather_attribution', 'cenv0594'),
-               ('Other', 'cenv0594')]
+               ]
+               # ('Other', 'cenv0594')]
+
+    # sites = [('Other', 'cenv0594')]
+
     for f in folders:
         s = SharedSpace(f[1],f[0],'linux')
         db.session.add(s)
+    for s in sites:
+        ss = Website(s[1],s[0])
+        db.session.add(ss)
 
     db.session.commit()
 
-if __name__ == "__main__":
-    # initdb()
-    app.run(port=5000)
+
+
+# if __name__ == "__main__":
+#     app.run(port=5006)
+
+
+
+
+
+manager.add_command('db', MigrateCommand)
+if __name__ == '__main__':
+    #     # initdb()
+    manager.run()
+
+
+# initialise:
+# python manage.py db init
+
+# migrate/update:
+# python manage.py db migrate
+
+# apply update:
+# python manage.py db upgrade

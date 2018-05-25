@@ -6,34 +6,38 @@
 
 		{% if not g.user.s1 %}
 {#		<h1>Hello</h1>#}
-            <p>IT need your help to complete a survey on the data stored on SoGE infrastructure This is in line with new policy on data management (often referred to as GDPR).</p>
+            <p>IT need your help to complete a survey on the data stored on SoGE infrastructure. This is in line with new policy on data management (often referred to as GDPR).</p>
 		{% else %}
 		<h1>Welcome back.</h1>
 		{% endif %}
 
-		<p>Please complete the two surveys.</p>
+		<p>Please complete the three surveys.</p>
 
 	</div>
 
 	<div class="row">
 
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{% if not s1 %}
 				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_1')}}" role="button">Personal Data Survey</a></p>
+				<br>
+                <p>Not completed</p>
 			{% elif s1 %}
 				<a class="btn btn-primary btn-lg btn-block disabled" role="button">
 					<span class="glyphicon glyphicon-ok pull-left"></span>	Personal Data Survey
 				</a>
 				<br>
-				<p>Thanks for completing the Personal Data Survey.</p>
+				<p>Thanks for completing the Personal Data Survey, {{ s1_year }}.</p>
 			{% else %}
 			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Personal Data Survey</a></p>
 			{% endif %}
 		</div>
 
-		<div class="col-md-6">
+		<div class="col-md-4">
 			{% if s1 and not s2%}
 				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">Shared Space Data Survey</a></p>
+				<br>
+                <p>Not completed</p>
 			{% elif s2 %}
 				<a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">
 					<span class="glyphicon glyphicon-ok pull-left"></span>	Shared Space Data Survey
@@ -48,6 +52,28 @@
 				<p>Thanks for completing the Shared Space Data Survey.</p>
 			{% else %}
 			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Shared Space Data Survey</a></p>
+			{% endif %}
+		</div>
+
+		<div class="col-md-4">
+			{% if s1 and s2 and not s3%}
+				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_3')}}" role="button">Website Survey</a></p>
+				<br>
+                <p>Not completed</p>
+			{% elif s3 %}
+				<a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_3')}}" role="button">
+					<span class="glyphicon glyphicon-ok pull-left"></span>	Website Survey
+				</a>
+				<br>
+                <p>Shared survey completed for:</p>
+                <ul>
+                    {% for s in s3_details %}
+                        <li>{{ s.website }}, {{ s.year }}</li>
+                    {% endfor %}
+                </ul>
+				<p>Thanks for completing the Website Survey.</p>
+			{% else %}
+			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Website Survey</a></p>
 			{% endif %}
 		</div>
 

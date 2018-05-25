@@ -156,6 +156,8 @@ class Survey2Form(Form):
     #                                      ('Other','Other')])
     other_group = fields.StringField("If 'other' selected, please enter group/folder name")
 
+    linux_or_windows = fields.RadioField("If 'other' selected, please select storage type",
+        choices=[('linux', 'Linux'), ('windows', 'Windows')])
 
     # Alternative Email
     alt_email = fields.StringField('Please give an alternative contact email')  # , validators=[DataRequired()])
@@ -216,6 +218,27 @@ class Survey2Form(Form):
 
     # Comments
     comments = fields.TextAreaField('Any further comments:')
+
+class Survey3Form(Form):
+
+    has_site= fields.RadioField("Do you maintain or administer any websites related to your, or your group's, research?",
+        choices=[('Y', 'Yes'), ('N', 'No')],
+        # validators=[DataRequired()], default=None
+                                 )
+
+    other_site = fields.StringField("If 'other' selected, please enter site name")
+    url = fields.StringField("What is the URL used to access this site?")
+
+    hosted_by_soge = fields.RadioField("Is this site hosted internally on SoGE infrastucture, or on an external server?",
+        choices=[('I', 'Internal'), ('E', 'External')])
+
+    explanation = fields.TextAreaField('What is the motivation for hosting your site externally to SoGE? (e.g. collaboration with external parteners, computation, storage)')
+
+    # Alternative Email
+    alt_email = fields.StringField('Please give an alternative contact email')  # , validators=[DataRequired()])
+
+
+
 
 class ConfirmACLForm(Form):
 

@@ -64,6 +64,62 @@ ROLE_ADMIN = 1
 #     def __repr__(self):
 #         return '<User %r>' % (self.email)
 
+class WebhostingSurvey(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(8), nullable=False)
+    date = db.Column(db.Date)
+    year = db.Column(db.Integer,nullable=False,default=2018)
+    alt_email = db.Column(db.String(100), nullable=False)
+    hosted_by_soge = db.Column(db.Enum('I','E'), default='I')
+    has_site = db.Column(db.Enum('Y','N'), default='N')
+
+    site = db.Column(db.Enum('first site',
+                              'Other'
+                              ), nullable=True)
+    other_site=db.Column(db.String(20),nullable=True)
+
+
+    website_id = db.Column(
+        db.Integer,
+        db.ForeignKey('website.id'),
+        nullable=True
+    )
+    website = db.relationship(
+        'Website',
+        backref=db.backref(
+            'surveys',
+            lazy='dynamic'
+        )
+    )
+
+    def __init__(
+            self,
+            username, alt_email,
+            year=datetime.datetime.utcnow().year):
+        self.date = datetime.datetime.utcnow()
+        self.year = year
+        self.username=username
+        self.has_site='N'
+        self.site='Other'
+        self.alt_email=alt_email
+
+
+    def get_id(self):
+        return unicode(self.id)
+
+
+    @staticmethod
+    def has_been_done_by(username, year=None):
+
+        q= WebhostingSurvey.query.filter(WebhostingSurvey.username==username)
+        if year:
+            q=q.filter(WebhostingSurvey.year==year)
+
+        if q.count()>0:
+            return True,q.all()
+
+        return False,[]
 
 class PersonalSurvey(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -71,7 +127,7 @@ class PersonalSurvey(db.Model):
     date = db.Column(db.Date)
     year = db.Column(db.Integer,nullable=False,default=2018)
     alt_email = db.Column(db.String(100), nullable=False)
-    has_data = db.Column(db.Enum('Y','N'), default=True)
+    has_data = db.Column(db.Enum('Y','N'), default='Y')
 
     supply_media = db.Column(db.String(200), nullable=True)
     file_size_estimate = db.Column(db.String(20), nullable=True)
@@ -172,7 +228,7 @@ class SharedSurvey(db.Model):
     shared_space_id = db.Column(
         db.Integer,
         db.ForeignKey('shared_space.id'),
-        nullable=False
+        nullable=True
     )
     shared_space = db.relationship(
         'SharedSpace',
@@ -197,7 +253,7 @@ class SharedSurvey(db.Model):
             '4',
             '5'
         ),
-        nullable=False
+        nullable=True
     )
     process_steps_description = db.Column(db.Text, nullable=True)
     lineage = db.Column(db.Text, nullable=True)
@@ -217,7 +273,8 @@ class SharedSurvey(db.Model):
         self.year = year
         self.username=username
         self.group='Other'
-        self.has_data=False
+        self.has_data='N'
+        self.alt_email=alt_email
 
 
     def get_id(self):
@@ -258,6 +315,29 @@ class SharedSpace(db.Model):
 
     def __str__(self):
         return self.folder_name
+
+class Website(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    PI_username = db.Column(db.String(8), nullable=False)
+    site_name = db.Column(db.String(100), nullable=False)
+    url = db.Column(db.String(100), nullable=False)
+    is_soge_hosted = db.Column(db.Enum('Y','N'), default='Y')
+
+    def most_recent_year(self):
+        surveys = WebhostingSurvey.query.filter_by(website_id=self.id)
+        yr=0
+        for s in surveys:
+            if s.year>yr:
+                yr=s.year
+        return yr
+
+    def __init__(self,piname,sname, url="none"):
+        self.PI_username = piname
+        self.site_name = sname
+        self.url = url
+
+    def __str__(self):
+        return self.site_name
 
 # class Survey3(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
