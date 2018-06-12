@@ -64,7 +64,18 @@ ROLE_ADMIN = 1
 #     def __repr__(self):
 #         return '<User %r>' % (self.email)
 
+
+administrative_data_type = ["HR/Employment related data - CVs/references/etc",
+                            "Financial related data - expenses forms, etc.",
+                            "Other Student/staff data (photographs,videos, course lists etc)",
+                            "Alumni Data (including Photos",
+                            "Other"]
+research_data_type = ["Study Datasets",
+                      "Other"]
+
 class WebhostingSurvey(db.Model):
+    __bind_key__ = 'data_survey'
+
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(8), nullable=False)
@@ -121,7 +132,55 @@ class WebhostingSurvey(db.Model):
 
         return False,[]
 
+
+asset_types = db.Enum("Application / System",
+                      "Information / data sets (digital)",
+                      "Information / data sets (physical)",
+                      "Technology (Mobile device - University issued)",
+                      "Technology (Mobile device - Personal)",
+                      "Technology (Desktop)",
+                      "Technology (Server)",
+                      "Technology (Network)",
+                      "Technology (Telephony)",
+                      "Physical (HVAC - Heating, ventilation or air conditioning)",
+                      "Physical (Entry system)",
+                      "Service provider (Cloud)",
+                      "Service provider (IT service)")
+data_classes = db.Enum("Private","Public","Internal")
+LMH_enum = db.Enum("Low","Medium","High")
+times_enum = db.Enum("within 2 hours","within 6 hours","within 24 hours","within 72 hours")
+
+
+class InformationAssetInventory(db.Model):
+    __bind_key__ = 'data_survey'
+    __tablename__ = 'information_asset_inventory'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(8), nullable=False)
+    date = db.Column(db.Date)
+    year = db.Column(db.Integer,nullable=False,default=2018)
+    alt_email = db.Column(db.String(100), nullable=False)
+    has_assets = db.Column(db.Enum('Y','N'), default='Y')
+
+    asset_type = db.Column(asset_types)
+    asset_name = db.Column(db.String(100))
+    asset_owner = db.Column(db.String(100))
+    other_details = db.Column(db.Text)
+    data_classification = db.Column((data_classes))# Data Classification (see www.infosec.ox.ac.uk)
+    data_integrity = db.Column(LMH_enum)
+    data_availability = db.Column(LMH_enum)
+    recovery_time_objective = db.Column(times_enum)
+    recovery_point_objectice = db.Column(times_enum)
+
+    def __init__(self):
+        pass
+
+
+
+
 class PersonalSurvey(db.Model):
+    __bind_key__ = 'data_survey'
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(8), nullable=False)
     date = db.Column(db.Date)
@@ -132,7 +191,6 @@ class PersonalSurvey(db.Model):
     supply_media = db.Column(db.String(200), nullable=True)
     file_size_estimate = db.Column(db.String(20), nullable=True)
     file_size_final = db.Column(db.String(20), nullable=True)
-    format_name = db.Column(db.String(100), nullable=True)
     use_constraints = db.Column(db.Text, nullable=True)
     public_access_constraints = db.Column(db.Text,nullable=True)
     process_status = db.Column(
@@ -154,6 +212,16 @@ class PersonalSurvey(db.Model):
     analytical_methods = db.Column(db.Text,nullable=True)
     comments = db.Column(db.Text,nullable=True)
 
+
+
+
+    data_type = db.Column(db.Enum("Administrative","Research"),default="Research")
+    specific_data_type = db.Column(db.String(150),nullable=True)
+    is_data_personal = db.Column(db.Boolean,default=False,nullable=False)
+    curec_date = db.Column(db.Date, nullable=True)
+    data_source = db.Column(db.Enum("me","other"),nullable=False,default="me")
+    license_or_data_source = db.Column(db.Text,nullable=True)
+
     def __init__(
             self,
             username, alt_email,
@@ -167,6 +235,35 @@ class PersonalSurvey(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+    def license_required(self):
+        #if the user didn;t collect this data source, they should cite the source and any license agreement
+        if self.data_source=="other" and self.data_type=="Research":
+            return True
+        return False
+
+    def CUREC_required(self):
+        # for research data of a personal nature
+        if self.data_type=="Research" and self.is_data_personal:
+            return True
+        return False
+
+    def is_curec_uptodate(self):
+        # todo: what is the time limit for CUREC?
+        if self.curec_date is not None:
+            return True
+        return False
+
+    def is_full_survey_required(self):
+        # if data is of a personal nature and there is no CUREC form, or it is out of data, or if this is administrative data rather than research
+        if self.is_data_personal:
+            if not self.is_curec_uptodate():
+                return True
+            if self.data_type == "Administrative":
+                return True
+        return False
+
+
+
     @staticmethod
     def has_been_done_by(username, year=None):
 
@@ -179,8 +276,59 @@ class PersonalSurvey(db.Model):
 
         return False,[]
 
+service_types =db.Enum("infrastructure","platform","software","cots","custom_software","outsourced_service_provider","other")
+information_types =db.Enum("financial","hr","student","dev_and_alum","personal_non_uni_members","research","other")
+
+class ThirdPartyRegister(db.Model):
+    __bind_key__ = 'data_survey'
+    __tablename__ = 'third_party_register'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(8), nullable=False)
+    date = db.Column(db.Date)
+    year = db.Column(db.Integer,nullable=False,default=2018)
+    alt_email = db.Column(db.String(100), nullable=False)
+    uses_third_parties = db.Column(db.Enum('Y','N'), default='Y')
+
+    Supplier = db.Column(db.Integer, db.ForeignKey('known_third_party_supplier.id'), nullable=False)
+
+    description = db.Column(db.String(200),nullable=False)#Description of Service / Usage
+    information_type = db.Column((information_types))# Information Type
+    division = db.Column(db.Enum("social_sci","humanities"))# Division
+    department = "Geography"# Department / Section
+    data_classification = db.Column((data_classes))# Data Classification (see www.infosec.ox.ac.uk)
+    data_volume_records = db.Column(db.Enum("<1000","1000-4999","5000-10k",">10k"))# Data Volume
+    data_compliance = db.Column(db.Enum("Unspecific","Specific"))# Data Compliance
+    contractual_review = "Adopted supplier's standard  T&Cs.  T&Cs can be changed without notification"# Contractual Review
+    assessment = "None/Unknown"# Information Security Team Third Party Security Assessment ouputSupplier
+
+    def __init__(self):
+        pass
+
+
+class KnownThirdPartySuppliers(db.Model):
+    __bind_key__ = 'data_survey'
+    __tablename__ = 'known_third_party_supplier'
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(100), nullable=False)
+    service_type = db.Column((service_types))# Type of Service
+    service_owner_email = db.Column(db.String(100))# Service Owner email
+    data_location = db.Column(db.Enum("UK", "EEA", "non-EEA"))# Data Location
+
+
+    def __init__(
+            self,
+            description, service_type,service_owner_email,data_location):
+        self.description=description
+        self.service_type=service_type
+        self.service_owner_email=service_owner_email
+        self.data_location=datetime
+
 
 class SharedSurvey(db.Model):
+    __bind_key__ = 'data_survey'
+
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(8), nullable=False)
     date = db.Column(db.Date)
@@ -293,6 +441,8 @@ class SharedSurvey(db.Model):
         return False,[]
 
 class SharedSpace(db.Model):
+    __bind_key__ = 'data_survey'
+
     id = db.Column(db.Integer, primary_key=True)
     PI_username = db.Column(db.String(8), nullable=False)
     folder_name = db.Column(db.String(30), nullable=False)
@@ -316,6 +466,8 @@ class SharedSpace(db.Model):
         return self.folder_name
 
 class Website(db.Model):
+    __bind_key__ = 'data_survey'
+
     id = db.Column(db.Integer, primary_key=True)
     PI_username = db.Column(db.String(8), nullable=False)
     site_name = db.Column(db.String(100), nullable=False)

@@ -59,15 +59,27 @@ class Survey1Form(Form):
                                  )
 
     # Alternative Email
-    alt_email = fields.StringField('Please give an alternative contact email')#, validators=[DataRequired()])
+    alt_email = fields.StringField('Please give an alternative contact email which we can use to contact you if/when you leave the University:')#, validators=[DataRequired()])
     # Supply Media
-    supply_media = fields.StringField('Media formats in which the data resource can be supplied')
+    supply_media = fields.SelectMultipleField('Media types in which the data resource can be supplied (select all that apply):',
+                                              choices=[("spreadsheets","Spreadsheets"),
+                                                       ("images","Images"),
+                                                       ("video","Video"),
+                                                       ("audio","Audio"),
+                                                       ("surveys","Surveys"),
+                                                       ("text","Text")])
     # File Size(estimate)
-    file_size_estimate = fields.StringField('The estimated size of the files')
+    file_size_estimate = fields.StringField('The estimated current total size of the data asset (e.g. 10GB)')
+    # num records held
+    num_records = fields.SelectField('Choose the approximate number of records (number of persons) holding personal data:',
+                                        choices=[('<1k','< 1,000'),
+                                                 ('1k-5k','1,000 - 5,000'),
+                                                 ('5k-10k','5,000-10,000'),
+                                                 ('>10k','> 10,000')])
     # File Size(final)
-    file_size_final = fields.StringField('The final size of the files')
+    file_size_final = fields.StringField('The estimated predicted total size of the final data asset (e.g. 1TB)')
     # Format Name
-    format_name = fields.StringField('Data resource format type (examples: images, video, text)')
+    # format_name = fields.StringField('Data resource format type (examples: images, video, text)')
     # Use Constraints
     use_constraints = fields.TextAreaField('Description of the restrictions and legal prerequisites for accessing and using the data resource. <br/>'
                                            'Describe the conditions which must be accepted to access and use the data. Adress conditions such as the protection of privacy, '
@@ -111,6 +123,22 @@ class Survey1Form(Form):
 
     # Comments
     comments = fields.TextAreaField('Any further comments:')
+
+
+
+
+
+    from models import administrative_data_type,research_data_type
+
+
+    data_type = fields.SelectField("Is this data used for administrative or research purposes?",choices=[("Administrative","Administrative"),("Research","Research")])
+    admin_datatype = fields.SelectField("Select the type of data that you hold:",choices=[(a,a) for a in administrative_data_type])
+    research_datatype = fields.SelectField("Select the type of data that you hold:",choices=[(a,a) for a in research_data_type])
+    is_data_personal = fields.RadioField('Is this data personal in nature?', choices=[('Y1', 'Yes'), ('N1', 'No')], default='N1')
+    curec_accepted = fields.BooleanField("Did you receive CUREC approval?")
+    curec_date = fields.DateField("If so, select the date that the CUREC form was accepted:")
+    data_source = fields.RadioField("Did you collect this data yourself?",choices=[("me","Yes, I did"),("other","No")],default='me')
+    license_or_data_source = fields.TextAreaField("Please enter the license text or a description of the data source for this data")
 
 
 class Survey2Form(Form):

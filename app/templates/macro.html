@@ -1,20 +1,28 @@
 {% macro render_field(field) %}
 
 {% if field.errors %}
-<div class="form-group has-error">
-{{ field.label(class="control-label", for=field.name) }}
-{{ field(**kwargs)|safe }}
 
-{% for error in field.errors %}
-<span class="help-block has-error">{{ error|e }}</span>
-{% endfor %}
-</div>
+    <div class="form-group has-error">
+    {{ field.label(class="control-label", for=field.name) }}
+    {{ field(**kwargs)|safe }}
+
+    {% for error in field.errors %}
+    <span class="help-block has-error">{{ error|e }}</span>
+    {% endfor %}
+    </div>
 
 {% else %}
 	{% if field.type == 'BooleanField' %}
 		<div class="form-group">
-		{{ field(**kwargs) }} {{ field.label(class="control-label", for=field.name) }}
+        <input id="{{ field.name }}" name="{{ field.name }}" type="checkbox" value="y"  onclick="myFunction()"> {{ field.label(class="control-label", for=field.name) }}
 		</div>
+    {% elif field.type == "DateField" %}
+        <div class="form-group">
+        {{ field.label(class="control-label", for=field.name) }}
+{#        		{{ field(**kwargs) }}#}
+        <input id="{{ field.name }}" type="date">
+        </div>
+
 
 	{% else %}
 		<div class="form-group">

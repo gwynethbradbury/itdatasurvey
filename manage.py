@@ -3,7 +3,7 @@
 from flask.ext.script import Manager
 from app import app, db
 
-from app.models import PersonalSurvey,SharedSurvey,SharedSpace,Website
+from app.models import PersonalSurvey,SharedSurvey,SharedSpace,Website,ThirdPartyRegister,KnownThirdPartySuppliers
 
 from flask.ext.migrate import Migrate, MigrateCommand
 
@@ -20,7 +20,7 @@ manager.add_option('-c', '--config', dest='config', required=False)
 def initdb():
     pass
     """initialize database"""
-    db.drop_all()
+    # db.drop_all()
     db.create_all()
 
     folders = [('15_20deg_water_resources', 'cenv0594'),
@@ -57,7 +57,7 @@ def initdb():
                ]
                # ('Other', 'cenv0594')]
 
-    # sites = [('Other', 'cenv0594')]
+    sites = [('Other', 'cenv0594')]
 
     for f in folders:
         s = SharedSpace(f[1],f[0],'linux')
@@ -79,7 +79,7 @@ def initdb():
 
 manager.add_command('db', MigrateCommand)
 if __name__ == '__main__':
-    #     # initdb()
+    initdb()
     manager.run()
 
 
