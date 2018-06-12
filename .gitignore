@@ -2,6 +2,7 @@
 *.pyc
 *.log
 config.py
+dbconfig.py
 .idea
 components
 node_modules

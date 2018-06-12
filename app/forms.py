@@ -131,11 +131,11 @@ class Survey1Form(Form):
     from models import administrative_data_type,research_data_type
 
 
-    data_type = fields.SelectField("Is this data used for administrative or research purposes?",choices=[("Administrative","Administrative"),("Research","Research")])
-    admin_datatype = fields.SelectField("Select the type of data that you hold:",choices=[(a,a) for a in administrative_data_type])
-    research_datatype = fields.SelectField("Select the type of data that you hold:",choices=[(a,a) for a in research_data_type])
+    # data_type = fields.SelectField("Is this data used for administrative or research purposes?",choices=[("Administrative","Administrative"),("Research","Research")])
+    admin_datatype = fields.SelectMultipleField("Select the type of data that you hold:",choices=[(a,a) for a in administrative_data_type])
+    research_datatype = fields.SelectMultipleField("Select the type of data that you hold:",choices=[(a,a) for a in research_data_type])
     is_data_personal = fields.RadioField('Is this data personal in nature?', choices=[('Y1', 'Yes'), ('N1', 'No')], default='N1')
-    curec_accepted = fields.BooleanField("Did you receive CUREC approval?")
+    curec_accepted = fields.BooleanField('Did you receive CUREC approval? <a href="https://researchsupport.admin.ox.ac.uk/governance/ethics/apply/sshidrec#collapse394921" class="text-info" target="_blank">Info.</a>')
     curec_date = fields.DateField("If so, select the date that the CUREC form was accepted:")
     data_source = fields.RadioField("Did you collect this data yourself?",choices=[("me","Yes, I did"),("other","No")],default='me')
     license_or_data_source = fields.TextAreaField("Please enter the license text or a description of the data source for this data")

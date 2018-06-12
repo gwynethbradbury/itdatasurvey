@@ -70,60 +70,88 @@
                 var isVisible = $( ".further-fields" ).is( ":visible" );
                 if(isVisible==true)
                     $('.further-fields').toggle();
+                isVisible = $( ".further-fields0" ).is( ":visible" );
+                if(isVisible==true)
+                    $('.further-fields0').toggle();
             });
 
             $(":radio[value=Y]").click(function(){
                 var isVisible = $( ".further-fields" ).is( ":visible" );
                 if(isVisible==false)
                     $('.further-fields').toggle();
+                isVisible = $( ".further-fields0" ).is( ":visible" );
+                if(isVisible==false)
+                    $('.further-fields0').toggle();
             });
 
 
 
             $(":radio[value=N1]").click(function(){
-                var isVisible = $( ".further-fields4" ).is( ":visible" );
+                var isVisible = $( ".further-fields-ispersonal" ).is( ":visible" );
                 if(isVisible==true)
-                    $('.further-fields4').toggle();
-                    $('.further-fields7').toggle();
-                    $('.further-fields8').toggle();
+                    $('.further-fields-ispersonal').toggle();
+                isVisible = $( ".further-fields-ispersonal2" ).is( ":visible" );
+                if(isVisible==true)
+                    $('.further-fields-ispersonal2').toggle();
             });
 
             $(":radio[value=Y1]").click(function(){
-                var isVisible = $( ".further-fields4" ).is( ":visible" );
+                var isVisible = $( ".further-fields-ispersonal" ).is( ":visible" );
                 if(isVisible==false)
-                    $('.further-fields4').toggle();
-                    $('.further-fields7').toggle();
-                    $('.further-fields8').toggle();
+                    $('.further-fields-ispersonal').toggle();
+                isVisible = $( ".further-fields-ispersonal2" ).is( ":visible" );
+                if(isVisible==false)
+                    $('.further-fields-ispersonal2').toggle();
             });
 
 
-            $(":radio[value=me]").click(function(){
-                var isVisible = $( ".further-fields5" ).is( ":visible" );
-                if(isVisible==true)
-                    $('.further-fields5').toggle();
-                    $('.further-fields6').toggle();
+            $(":radio[value=me]").click(function() {
+                var isVisible = $(".further-fields-mine").is(":visible");
+                if (isVisible == false){
+                    $('.further-fields-mine').toggle();
+                }
+                isVisible = $(".further-fields-mine2").is(":visible");
+                if (isVisible == true){
+                    $('.further-fields-mine2').toggle();
+                }
             });
 
             $(":radio[value=other]").click(function(){
-                var isVisible = $( ".further-fields5" ).is( ":visible" );
-                if(isVisible==false)
-                    $('.further-fields5').toggle();
-                    $('.further-fields6').toggle();
+                var isVisible = $( ".further-fields-mine" ).is( ":visible" );
+                if(isVisible==true) {
+                    $('.further-fields-mine').toggle();
+                }
+                isVisible = $( ".further-fields-mine2" ).is( ":visible" );
+                if(isVisible==false) {
+                    $('.further-fields-mine2').toggle();
+                }
             });
 
 
             $(":radio[value=admin]").click(function(){
-                var isVisible = $( ".further-fields2" ).is( ":visible" );
-                if(isVisible==false){
-                    $('.further-fields2').toggle();
-                    $('.further-fields3').toggle();}
+                var isVisible = $( ".further-fields-admin" ).is( ":visible" );
+                if(isVisible==false) {
+                    $('.further-fields-admin').toggle();
+                    $('.further-fields-research').toggle();
+                }
+                isVisible = $( ".further-fields-research2" ).is( ":visible" );
+                if(isVisible==true){
+                    $('.further-fields-research2').toggle();
+                    $('.further-fields-research3').toggle();
+                }
             });
 
             $(":radio[value=research]").click(function() {
-                var isVisible = $(".further-fields2").is( ":visible" );
+                var isVisible = $(".further-fields-admin").is( ":visible" );
                 if (isVisible == true){
-                    $('.further-fields2').toggle();
-                    $('.further-fields3').toggle();}
+                    $('.further-fields-admin').toggle();
+                    $('.further-fields-research').toggle();
+                }
+                isVisible = $(".further-fields-research2").is( ":visible" );
+                if (isVisible == false){
+                    $('.further-fields-research2').toggle();
+                    $('.further-fields-research3').toggle();
+                }
             });
         });
     </script>
@@ -149,112 +177,127 @@
 
 
                     <div class="card" style="overflow: visible">
-                        <div class="form-group">
-                            <label class="control-label" for="has_data">Do you store data on SoGE IT infrastructure?</label><br>
-                            <input id="has_data-0" name="has_data" type="radio" value="Y" checked> <label for="has_data-0">Yes</label>
-                            <input id="has_data-1" name="has_data" type="radio" value="N"> <label for="has_data-1">No</label>
+                        <div class="card-header">Do you store data on SoGE IT infrastructure?</div>
+                        <div class="card-body">
+                            <div class="form-group">
+{#                                <label class="control-label" for="has_data">Do you store data on SoGE IT infrastructure?</label><br>#}
+                                <input id="has_data-0" name="has_data" type="radio" value="Y" checked> <label for="has_data-0">Yes</label>
+                                <input id="has_data-1" name="has_data" type="radio" value="N"> <label for="has_data-1">No</label>
 
-                            <a class="text-info popup" onclick="myPopupFunction('myPopup')">I don't know
-                                <span class="popuptext" id="myPopup">If you store data on SoGE infrastructure, you should be aware of it in one of the following locations: a mapped Unix drive, or a network Windows drive.</span>
-                            </a>
+                                <a class="text-info popup" onclick="myPopupFunction('myPopup')">I don't know
+                                    <span class="popuptext" id="myPopup">If you store data on SoGE infrastructure, you should be aware of it in one of the following locations: a mapped Unix drive, or a network Windows drive.</span>
+                                </a>
+                            </div>
+
+                            <div class="further-fields0">
+                                {{ render_field(form.alt_email) }}
+                            </div>
                         </div>
+
                     </div>
 
 
                     <div class="further-fields">
-                        <div class="card" style="overflow: visible">
-{#                        {{ render_field(form.is_data_personal) }}#}
-                            <div class="form-group">
-                                <label class="control-label" for="is_data_personal">Is this data personal in nature? <a class="text-info" href="https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/key-definitions/what-is-personal-data/" target="_blank">Info.</a>
-</label><br>
-                                <input id="is_data_personal-0" name="is_data_personal" type="radio" value="Y1"> <label for="is_data_personal-0">Yes</label>
-                                <input checked="" id="is_data_personal-1" name="is_data_personal" type="radio" value="N1"> <label for="is_data_personal-1">No</label>
-                                <a class="text-info popup" onclick="myPopupFunction('myPopup2')">I don't know
-                                    <span class="popuptext" id="myPopup2">Personal data is information that relates to an identified or identifiable individual.
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
 
 
 {#                        {{ render_field(form.data_type) }}#}
-                        <div class="form-group" onclick="myFunction()">
-                            <label class="control-label" for="is_admin">Is this data used for administrative or research purposes?
-</label><br>
-                            <input id="is_admin-0" name="is_admin" type="radio" value="admin" checked> <label for="is_admin-0">Administrative</label>
-                            <input id="is_admin-1" name="is_admin" type="radio" value="research"> <label for="is_admin-1">Research</label>
+                        <div class="card" style="overflow: visible">
+                            <div class="card-header">What is the purpose of this data?</div>
+                            <div class="card-body">
+
+                                <div class="form-group" onclick="myFunction()">
+{#                                    <label class="control-label" for="is_admin">What is the purpose of this data?</label><br>#}
+                                    <input id="is_admin-0" name="is_admin" type="radio" value="admin" checked> <label for="is_admin-0">Administrative</label>
+                                    <input id="is_admin-1" name="is_admin" type="radio" value="research"> <label for="is_admin-1">Research</label>
+                                </div>
+
+
+                                <div class="further-fields-admin">
+                                    {{ render_field(form.admin_datatype) }}
+                                </div>
+
+                                <div class="further-fields-research" style="display:none">
+                                    {{ render_field(form.research_datatype) }}
+
+
+                                    {{ render_field(form.data_source) }}
+
+                                    <div class="further-fields-mine2" style="display:none">
+                                        {{ render_field(form.license_or_data_source) }}
+                                    </div>
+
+                                </div>
+                            </div>
+
                         </div>
 
 
-                    <div class="further-fields2">
-                        {{ render_field(form.admin_datatype) }}
-                    </div>
-
-                    <div class="further-fields3" style="display:none">
-                        {{ render_field(form.research_datatype) }}
-
-
-                        {{ render_field(form.data_source) }}
-
-                        <div class="further-fields5" style="display:none">
-                            {{ render_field(form.license_or_data_source) }}
-                        </div>
-                        <div class="further-fields6">
-                            <div class="further-fields7" style="display:none">
-                                {{ render_field(form.curec_accepted) }}
-                                {{ render_field(form.curec_date) }}
+                        <div class="card" style="overflow: visible">
+                            <div class="card-header">Is this data personal in nature? <a class="text-info" href="https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/key-definitions/what-is-personal-data/" target="_blank">Info.</a></div>
+                            <div class="card-body">
+                                <div class="form-group">
+{#                                    <label class="control-label" for="is_data_personal">Is this data personal in nature? <a class="text-info" href="https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/key-definitions/what-is-personal-data/" target="_blank">Info.</a>#}
+{#                                    </label><br>#}
+                                    <input id="is_data_personal-0" name="is_data_personal" type="radio" value="Y1"> <label for="is_data_personal-0">Yes</label>
+                                    <input checked="" id="is_data_personal-1" name="is_data_personal" type="radio" value="N1"> <label for="is_data_personal-1">No</label>
+                                    <a class="text-info popup" onclick="myPopupFunction('myPopup2')">I don't know
+                                        <span class="popuptext" id="myPopup2">Personal data is information that relates to an identified or identifiable individual.
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="further-fields-ispersonal" style="display:none">
+{#                                if research + personal + collected by me#}
+                                    <div class="further-fields-research2" style="display:none">
+                                        <div class="further-fields-mine">
+                                                {{ render_field(form.curec_accepted) }}
+                                                {{ render_field(form.curec_date) }}
+                                        </div>
+                                    </div>
+                                    {{ render_field(form.num_records)}}
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-
-
-                        <div class="further-fields4" style="display:none">
-                        {{ render_field(form.num_records)}}
-                        </div>
-
-                        {{ render_field(form.alt_email) }}
-
-                        <br/>
-<hr/>
-
-                        Please answer the following questions as best possible.
 
                         <br/>
 
 
 
-                        {{ render_field(form.supply_media) }}
-                        {{ render_field(form.file_size_estimate)}}
-                        {{ render_field(form.file_size_final)}}
 
 
 
 
-{#                        Checkbox: <input type="checkbox" id="myCheck"  onclick="myFunction()">#}
-
-{#<p id="text" style="display:none">Checkbox is CHECKED!</p>#}
 
 
-
-
-<div class="further-fields8" style="display: none">
                         <div id="no_curec_fields">
-                            {{ render_field(form.use_constraints)}}
-                            {{ render_field(form.public_access_constraints)}}
-                            {{ render_field(form.process_status)}}
-                            {{ render_field(form.lineage)}}
+                            <div class="card further-fields-ispersonal2" style="display: none">
+                                <div class="card-header">Please tell us about the nature of the personal data and how it is to be/has been processed</div>
+                                <div class="card-body">
+                                    {{ render_field(form.use_constraints)}}
+                                    {{ render_field(form.public_access_constraints)}}
+                                    {{ render_field(form.process_status)}}
+                                    {{ render_field(form.lineage)}}
 
-                            <div class="further-fields3" style="display:none">
-                            {{ render_field(form.experimental_design)}}
+                                    <div class="further-fields-research3" style="display:none">
+                                        {{ render_field(form.experimental_design)}}
+                                    </div>
+                                    {{ render_field(form.collection_generation_transformation_methods)}}
+                                    {{ render_field(form.fieldwork_lab_instrumentation)}}
+                                    {{ render_field(form.analytical_methods)}}
+                                    {{ render_field(form.comments, class="form-control")}}
+
+                                </div>
                             </div>
-                            {{ render_field(form.collection_generation_transformation_methods)}}
-                            {{ render_field(form.fieldwork_lab_instrumentation)}}
-                            {{ render_field(form.analytical_methods)}}
-                            {{ render_field(form.comments, class="form-control")}}
-
                         </div>
-</div>
+
+                        <div class="card">
+                            <div class="card-header">Please tell us a little about the data formats and size estimates</div>
+                            <div class="card-body">
+                                {{ render_field(form.supply_media) }}
+                                {{ render_field(form.file_size_estimate)}}
+                                {{ render_field(form.file_size_final)}}
+                            </div>
+                        </div>
 
                     </div>
 
