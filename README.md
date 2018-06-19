@@ -8,7 +8,7 @@ To survey and gather relevant user data tored on SoGE Infrastructure.
 
 Project Structure
 ------------------
-###Application Project Structure
+### Application Project Structure
 ```
 app
   ├── __init__.py
