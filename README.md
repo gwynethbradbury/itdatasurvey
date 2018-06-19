@@ -74,7 +74,7 @@ $ python manage.py runserver
 
 
 #### Cron job: 
-Run python manage.py write_output to get the csv output file
+ * `$ python manage.py write_output to get the csv output file`
 
 
 Tools and Dependencies
