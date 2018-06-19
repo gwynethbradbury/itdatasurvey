@@ -27,7 +27,7 @@ config.py
 ```
 
 ###Application Configuration
- * `config.py` - will hold all configuration values for the application runtime
+ * `config.py` - will hold all configuration values for the application runtime - LOCAL FILE
 
 
 Getting Started
@@ -71,12 +71,10 @@ $ python manage.py runserver
 ```
 
 ####Production
-In production the application uses `gunicorn`. The command to start the server is:
-```
-# <vitualenv>/gunicorn --bind 127.0.0.1:5000 --workers 2 app:app --log-level=debug --log-file=$LOGFILE 2>>$LOGFILE --daemon
-```
- * this must run from within the project's directory
- * you can place these options in a config file for gunicorn as well
+
+
+####Cron job: 
+Run python manage.py write_output to get the csv output file
 
 
 Tools and Dependencies
