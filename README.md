@@ -26,14 +26,14 @@ manage.py
 config.py
 ```
 
-###Application Configuration
+### Application Configuration
  * `config.py` - will hold all configuration values for the application runtime - LOCAL FILE
 
 
 Getting Started
 ------------------
 
-####Installing Packaged Dependencies
+#### Installing Packaged Dependencies
 
 You are strongly encouraged to use a virtual environment for development, and [virtualenv wrapper](http://virtualenvwrapper.readthedocs.org/en/latest/) is the way to go.
 
@@ -46,7 +46,7 @@ Whether you use a virtualenv or not your first step is to install your Python de
 `requirements.txt` holds a record of all packaged Python dependencies. If you update or add any packages, please remember to run:
  * `$ pip freeze > requirements.txt`
 
-####Configuring/Initializing the Database
+#### Configuring/Initializing the Database
 
 Configuration specifications will come in a later update. For now these are the config variables that will be utilized.
  * `SQLALCHEMY_DATABASE_URI`
@@ -59,7 +59,7 @@ To initialize the database, run:<br>
 Running the App
 ------------------
 
-####Development
+#### Development
 To run the application in your development environment. After you initialize your database;
  * `$ python manage.py runserver`
 
@@ -70,10 +70,10 @@ $ python manage.py runserver
 * Restarting with reloader
 ```
 
-####Production
+#### Production
 
 
-####Cron job: 
+#### Cron job: 
 Run python manage.py write_output to get the csv output file
 
 
