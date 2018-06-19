@@ -227,6 +227,7 @@
                                     </div>
 
                                 </div>
+                                {{ render_field(form.asset_name) }}
                             </div>
 
                         </div>
@@ -247,13 +248,13 @@
                                 </div>
                                 <div class="further-fields-ispersonal" style="display:none">
 {#                                if research + personal + collected by me#}
+                                    {{ render_field(form.num_records)}}
                                     <div class="further-fields-research2" style="display:none">
                                         <div class="further-fields-mine">
                                                 {{ render_field(form.curec_accepted) }}
                                                 {{ render_field(form.curec_date) }}
                                         </div>
                                     </div>
-                                    {{ render_field(form.num_records)}}
                                 </div>
                             </div>
                         </div>
@@ -269,30 +270,33 @@
 
 
 
-                        <div id="no_curec_fields">
-                            <div class="card further-fields-ispersonal2" style="display: none">
-                                <div class="card-header">Please tell us about the nature of the personal data and how it is to be/has been processed</div>
-                                <div class="card-body">
-                                    {{ render_field(form.use_constraints)}}
-                                    {{ render_field(form.public_access_constraints)}}
-                                    {{ render_field(form.process_status)}}
-                                    {{ render_field(form.lineage)}}
+{#                        <div id="no_curec_fields">#}
+{#                            <div class="card further-fields-ispersonal2" style="display: none">#}
+{#                                <div class="card-header">Please tell us about the nature of the personal data and how it is to be/has been processed</div>#}
+{#                                <div class="card-body">#}
+{#                                    {{ render_field(form.use_constraints)}}#}
+{#                                    {{ render_field(form.public_access_constraints)}}#}
+{#                                    {{ render_field(form.process_status)}}#}
+{#                                    {{ render_field(form.lineage)}}#}
+{##}
+{#                                    <div class="further-fields-research3" style="display:none">#}
+{#                                        {{ render_field(form.experimental_design)}}#}
+{#                                    </div>#}
+{#                                    {{ render_field(form.collection_generation_transformation_methods)}}#}
+{#                                    {{ render_field(form.fieldwork_lab_instrumentation)}}#}
+{#                                    {{ render_field(form.analytical_methods)}}#}
+{#                                    {{ render_field(form.comments, class="form-control")}}#}
 
-                                    <div class="further-fields-research3" style="display:none">
-                                        {{ render_field(form.experimental_design)}}
-                                    </div>
-                                    {{ render_field(form.collection_generation_transformation_methods)}}
-                                    {{ render_field(form.fieldwork_lab_instrumentation)}}
-                                    {{ render_field(form.analytical_methods)}}
-                                    {{ render_field(form.comments, class="form-control")}}
-
-                                </div>
-                            </div>
-                        </div>
+{#                                </div>#}
+{#                            </div>#}
+{#                        </div>#}
 
                         <div class="card">
-                            <div class="card-header">Please tell us a little about the data formats and size estimates</div>
+                            <div class="card-header">Please tell us a little about the data location, formats and size estimates</div>
                             <div class="card-body">
+                                {{ render_field(form.linux_or_windows) }}
+                                {{ render_field(form.shared_or_personal) }}
+                                {{ render_field(form.path) }}
                                 {{ render_field(form.supply_media) }}
                                 {{ render_field(form.file_size_estimate)}}
                                 {{ render_field(form.file_size_final)}}

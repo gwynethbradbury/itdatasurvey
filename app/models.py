@@ -160,64 +160,54 @@ class InformationAssetInventory(db.Model):
     date = db.Column(db.Date)
     year = db.Column(db.Integer,nullable=False,default=2018)
     alt_email = db.Column(db.String(100), nullable=False)
-    has_assets = db.Column(db.Enum('Y','N'), default='Y')
+    has_assets = db.Column(db.Boolean,default=False)
 
-    asset_type = db.Column(asset_types)
-    asset_name = db.Column(db.String(100))
+    asset_type = db.Column(asset_types, default="Information / data sets (digital)")
+    asset_name = db.Column(db.String(100), default="Not given")
     asset_owner = db.Column(db.String(100))
-    other_details = db.Column(db.Text)
-    data_classification = db.Column((data_classes))# Data Classification (see www.infosec.ox.ac.uk)
-    data_integrity = db.Column(LMH_enum)
-    data_availability = db.Column(LMH_enum)
-    recovery_time_objective = db.Column(times_enum)
-    recovery_point_objectice = db.Column(times_enum)
-
-    def __init__(self):
-        pass
+    other_details = db.Column(db.Text, default="")
+    data_classification = db.Column((data_classes), default="Private")# Data Classification (see www.infosec.ox.ac.uk)
+    data_integrity = db.Column(LMH_enum,default="Low")
+    data_availability = db.Column(LMH_enum,default="Low")
+    recovery_time_objective = db.Column(times_enum,default="within 2 hours")
+    recovery_point_objective = db.Column(times_enum,default="within 2 hours")
 
 
 
-
-class PersonalSurvey(db.Model):
-    __bind_key__ = 'data_survey'
-
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(8), nullable=False)
-    date = db.Column(db.Date)
-    year = db.Column(db.Integer,nullable=False,default=2018)
-    alt_email = db.Column(db.String(100), nullable=False)
-    has_data = db.Column(db.Enum('Y','N'), default='Y')
-
-    supply_media = db.Column(db.String(200), nullable=True)
-    file_size_estimate = db.Column(db.String(20), nullable=True)
-    file_size_final = db.Column(db.String(20), nullable=True)
-    use_constraints = db.Column(db.Text, nullable=True)
-    public_access_constraints = db.Column(db.Text,nullable=True)
-    process_status = db.Column(
-        db.Enum(
-            '1',
-            '2',
-            '3',
-            '4',
-            '5'
-        ),
-        nullable=True
-    )
-    process_steps_description = db.Column(db.Text,nullable=True)
-    lineage = db.Column(db.Text,nullable=True)
-    experimental_design = db.Column(db.Text,nullable=True)
-    collection_generation_transformation_methods = db.Column(db.Text,nullable=True)
-    collection_generation_transformation_methods = db.Column(db.Text,nullable=True)
-    fieldwork_lab_instrumentation = db.Column(db.Text,nullable=True)
-    analytical_methods = db.Column(db.Text,nullable=True)
-    comments = db.Column(db.Text,nullable=True)
+    supply_media = db.Column(db.String(200), nullable=True, default="Not given")
+    file_size_estimate = db.Column(db.String(20), nullable=True, default="Not given")
+    file_size_final = db.Column(db.String(20), nullable=True, default="Not given")
+    # use_constraints = db.Column(db.Text, nullable=True)
+    # public_access_constraints = db.Column(db.Text,nullable=True)
+    # process_status = db.Column(
+    #     db.Enum(
+    #         '1',
+    #         '2',
+    #         '3',
+    #         '4',
+    #         '5'
+    #     ),
+    #     nullable=True
+    # )
+    # process_steps_description = db.Column(db.Text,nullable=True)
+    # lineage = db.Column(db.Text,nullable=True)
+    # experimental_design = db.Column(db.Text,nullable=True)
+    # collection_generation_transformation_methods = db.Column(db.Text,nullable=True)
+    # collection_generation_transformation_methods = db.Column(db.Text,nullable=True)
+    # fieldwork_lab_instrumentation = db.Column(db.Text,nullable=True)
+    # analytical_methods = db.Column(db.Text,nullable=True)
+    # comments = db.Column(db.Text,nullable=True)
 
 
 
-
-    data_type = db.Column(db.Enum("Administrative","Research"),default="Research")
-    specific_data_type = db.Column(db.String(150),nullable=True)
+    path = db.Column(db.Text, default="")
+    data_type = db.Column(db.Enum("Administrative","Research"),default="Administrative")
+    data_source = db.Column(db.Enum("me","other"),default="me")
+    linux_or_windows = db.Column(db.Enum("linux","windows"),default="linux")
+    shared_or_personal = db.Column(db.Enum("home","shared"),default="home")
+    # specific_data_type = db.Column(db.String(150),nullable=True)
     is_data_personal = db.Column(db.Boolean,default=False,nullable=False)
+    curec_accepted = db.Column(db.Boolean,default=False,nullable=False)
     curec_date = db.Column(db.Date, nullable=True)
     data_source = db.Column(db.Enum("me","other"),nullable=False,default="me")
     license_or_data_source = db.Column(db.Text,nullable=True)
@@ -225,15 +215,26 @@ class PersonalSurvey(db.Model):
     def __init__(
             self,
             username, alt_email,
-            year=datetime.datetime.utcnow().year):
+            year=datetime.datetime.utcnow().year,asset_owner=None
+
+    ):
         self.date = datetime.datetime.utcnow()
         self.year = year
         self.username=username
         self.has_data=False
         self.alt_email = alt_email
+        if asset_owner==None or asset_owner=="":
+            self.asset_owner=username
+        else:
+            self.asset_owner=asset_owner
+        self.other_details=""
 
     def get_id(self):
         return unicode(self.id)
+
+    def get_other_details_field(self):
+        #todo: collate fields not in the excel sheet into this field
+        pass
 
     def license_required(self):
         #if the user didn;t collect this data source, they should cite the source and any license agreement
@@ -267,14 +268,54 @@ class PersonalSurvey(db.Model):
     @staticmethod
     def has_been_done_by(username, year=None):
 
-        q= PersonalSurvey.query.filter(PersonalSurvey.username==username)
+        q= InformationAssetInventory.query.filter(InformationAssetInventory.username==username)
         if year:
-            q=q.filter(PersonalSurvey.year==year)
+            q=q.filter(InformationAssetInventory.year==year)
 
         if q.count()>0:
             return True,q.all()
 
         return False,[]
+
+
+    def get_output_for_central_services(self):
+        line=""
+        if self.has_assets and self.is_data_personal:
+            line=str.join(',',[
+                str(self.id),
+                str(self.asset_type),
+                str(self.asset_name),
+                str(self.asset_owner),
+                str(self.other_details),
+                str(self.data_classification),
+                str(self.data_integrity),
+                str(self.data_availability),
+                str(self.recovery_time_objective),
+                str(self.recovery_point_objective),
+            ]) + "\n"
+        return line
+    @staticmethod
+    def get_headers():
+        return "Asset ID," \
+               "Asset Type," \
+               "Asset Name," \
+               "Asset Owner," \
+               "Other Asset Information," \
+               "Classification / Confidentiality Level," \
+               "Integrity," \
+               "Availability," \
+               "Recovery Time Objective (RTO)," \
+               "Recovery Point Objective (RPO)" \
+               "\n"
+    @staticmethod
+    def produce_out_file(filename):
+        f = open(filename,'w')
+        q = InformationAssetInventory.query.all()
+        f.writelines([InformationAssetInventory.get_headers()])
+        for a in q:
+            f.writelines([a.get_output_for_central_services()])
+        f.close()
+
 
 service_types =db.Enum("infrastructure","platform","software","cots","custom_software","outsourced_service_provider","other")
 information_types =db.Enum("financial","hr","student","dev_and_alum","personal_non_uni_members","research","other")

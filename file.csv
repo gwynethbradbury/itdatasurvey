@@ -1,0 +1,2 @@
+Asset ID,Asset Type,Asset Name,Asset Owner,Other Asset Information,Classification / Confidentiality Level,Integrity,Availability,Recovery Time Objective (RTO),Recovery Point Objective (RPO)
+3,Information / data sets (digital),some data,cenv0594,>10k records, ,Private,Low,Low,within 2 hours,within 2 hours

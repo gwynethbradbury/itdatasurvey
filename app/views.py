@@ -6,11 +6,12 @@ from flask import url_for, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
-from models import PersonalSurvey as Survey1, SharedSurvey as Survey2, SharedSpace, WebhostingSurvey as Survey3, Website
+from models import InformationAssetInventory as Survey1, SharedSurvey as Survey2, SharedSpace, WebhostingSurvey as Survey3, Website
 from forms import Survey1Form, Survey2Form, Survey3Form, ConfirmACLForm
 from email import user_notification, forgot_password
 from config import DATABASE_QUERY_TIMEOUT
 from app import app, db, lm
+import os
 from decorators import admin_required
 
 from datetime import date
@@ -32,12 +33,75 @@ def inject_paths():
 @app.route('/survey_1/', methods=['GET', 'POST'])
 # @login_required
 def survey_1():
+    # survey = Survey1(current_user.uid_trim(), alt_email="not a real email")
+    #
+    # return redirect(url_for('index'))
+
+
     if not Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]:
         form = Survey1Form(request.form)
 
+        # if request.method == 'POST':
         if form.validate_on_submit():
             survey = Survey1(current_user.uid_trim(),alt_email="not a real email")
             form.populate_obj(survey)
+
+            if request.form.get("is_data_personal") == 'N1':
+                form.is_data_personal = 'N1'
+                survey.is_data_personal = False
+            else:
+                form.is_data_personal = 'Y1'
+                survey.is_data_personal = True
+
+            if form.has_data.data=='Y':
+                survey.has_assets=1
+            else:
+                survey.has_assets=0
+
+
+            # survey.asset_type = "Information / data sets (digital)"
+            # survey.asset_name = "Not given"
+            # survey.asset_owner = "Not given"
+            # survey.data_classification = "Private"
+            # survey.data_integrity = "Low"
+            # survey.data_availability = "Low"
+            # survey.recovery_time_objective = "within 2 hours"
+            # survey.recovery_point_objectice = "within 2 hours"
+
+            sm = ""
+            for f in request.form.getlist("supply_media"):
+                sm=sm+str(f)+", "
+            survey.supply_media = sm
+
+            sm = ""
+            if request.form.get("is_admin")=='admin':
+                survey.data_type = "Administrative"
+                sm="Admin: "
+                for f in request.form.getlist("admin_datatype"):
+                    sm=sm+str(f)+", "
+            else:
+                survey.data_type = "Research"
+                sm="Research: "
+                for f in request.form.getlist("research_datatype"):
+                    sm=sm+str(f)+", "
+
+            if survey.is_data_personal:
+                survey.other_details = survey.other_details + form.num_records.data + " records, "
+
+            # survey.file_size_estimate = "Not given"
+            # survey.file_size_final = "Not given"
+
+
+
+            # survey.data_type = "Administrative"
+            # survey.linux_or_windows = "Linux"
+            # survey.home_or_shared = "Home"
+            # survey.is_data_personal = False
+            # # survey.curec_date =
+            # survey.data_source = "me"
+            # survey.license_or_data_source = "Not given"
+
+
             db.session.add(survey)
 
             db.session.commit()
