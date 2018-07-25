@@ -35,12 +35,12 @@
 
 		<div class="col-md-4">
 			{% if s1 and not s2%}
-				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">Shared Space Data Survey</a></p>
+				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">Services Survey</a></p>
 				<br>
                 <p>Not completed</p>
 			{% elif s2 %}
 				<a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">
-					<span class="glyphicon glyphicon-ok pull-left"></span>	Shared Space Data Survey
+					<span class="glyphicon glyphicon-ok pull-left"></span>	Services Survey
 				</a>
 				<br>
                 <p>Shared survey completed for:</p>
@@ -49,9 +49,9 @@
                         <li>{{ s.group }}, {{ s.year }}</li>
                     {% endfor %}
                 </ul>
-				<p>Thanks for completing the Shared Space Data Survey.</p>
+				<p>Thanks for completing the Services Survey.</p>
 			{% else %}
-			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Shared Space Data Survey</a></p>
+			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Services Survey</a></p>
 			{% endif %}
 		</div>
 

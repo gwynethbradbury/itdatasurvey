@@ -72,6 +72,12 @@ administrative_data_type = ["HR/Employment related data - CVs/references/etc",
                             "Other"]
 research_data_type = ["Study Datasets",
                       "Other"]
+information_types2 = ["HR/Employment related data - CVs/references/etc",
+                    "Financial related data - expenses forms, etc.",
+                    "Other Student/staff data (photographs,videos, course lists etc)",
+                    "Alumni Data (including Photos",
+                    "Study Datasets",
+                    "Other"]
 
 class WebhostingSurvey(db.Model):
     __bind_key__ = 'data_survey'
@@ -146,6 +152,7 @@ asset_types = db.Enum("Application / System",
                       "Physical (Entry system)",
                       "Service provider (Cloud)",
                       "Service provider (IT service)")
+data_classes2 = ["Private","Public","Internal"]
 data_classes = db.Enum("Private","Public","Internal")
 LMH_enum = db.Enum("Low","Medium","High")
 times_enum = db.Enum("within 2 hours","within 6 hours","within 24 hours","within 72 hours")
@@ -347,24 +354,33 @@ class ThirdPartyRegister(db.Model):
         pass
 
 
-class KnownThirdPartySuppliers(db.Model):
+class KnownThirdPartySupplier(db.Model):
     __bind_key__ = 'data_survey'
     __tablename__ = 'known_third_party_supplier'
 
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(60))
     description = db.Column(db.String(100), nullable=False)
     service_type = db.Column((service_types))# Type of Service
     service_owner_email = db.Column(db.String(100))# Service Owner email
     data_location = db.Column(db.Enum("UK", "EEA", "non-EEA"))# Data Location
 
+    @staticmethod
+    def get_all_names():
+        q = KnownThirdPartySupplier.query.all()
+        s=[]
+        for a in q:
+            s.append(a.name)
+        return s
 
     def __init__(
             self,
-            description, service_type,service_owner_email,data_location):
+            name,description, service_type,service_owner_email,data_location):
+        self.name=name
         self.description=description
         self.service_type=service_type
         self.service_owner_email=service_owner_email
-        self.data_location=datetime
+        self.data_location=data_location
 
 
 class SharedSurvey(db.Model):

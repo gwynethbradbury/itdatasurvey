@@ -3,7 +3,8 @@
 from flask.ext.script import Manager
 from app import app, db
 
-from app.models import InformationAssetInventory as PersonalSurvey,SharedSurvey,SharedSpace,Website,ThirdPartyRegister,KnownThirdPartySuppliers
+from app.models import InformationAssetInventory as PersonalSurvey,SharedSurvey,\
+    SharedSpace,Website,ThirdPartyRegister,KnownThirdPartySupplier
 
 from flask.ext.migrate import Migrate, MigrateCommand
 import os
@@ -63,12 +64,21 @@ def initdb():
                # ('Other', 'cenv0594')]
 
     sites = [('Other', 'cenv0594')]
+    #infrastructure","platform","software","cots","custom_software","outsourced_service_provider","other
+    #    data_location = db.Column(db.Enum("UK", "EEA", "non-EEA"))# Data Location
+
+    tps=[("Other","other"),
+         ("Dropbox","other"),
+         ("Amazon Web Service (AWS)","platform",)]
 
     for f in folders:
         s = SharedSpace(f[1],f[0],'linux')
         db.session.add(s)
     for s in sites:
         ss = Website(s[1],s[0])
+        db.session.add(ss)
+    for s in tps:
+        ss = KnownThirdPartySupplier(s[0],"",s[1],"","non-EEA")
         db.session.add(ss)
 
     db.session.commit()

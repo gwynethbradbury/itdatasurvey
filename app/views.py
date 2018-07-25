@@ -7,7 +7,8 @@ from flask.ext.login import login_user, logout_user, current_user, login_require
 from flask.ext.sqlalchemy import get_debug_queries
 
 from models import InformationAssetInventory as Survey1, SharedSurvey as Survey2, SharedSpace, WebhostingSurvey as Survey3, Website
-from forms import Survey1Form, Survey2Form, Survey3Form, ConfirmACLForm
+from models import KnownThirdPartySupplier
+from forms import Survey1Form, ThirdPartySurvey as Survey2Form, Survey3Form, ConfirmACLForm
 from email import user_notification, forgot_password
 from config import DATABASE_QUERY_TIMEOUT
 from app import app, db, lm
@@ -123,18 +124,8 @@ def survey_1():
 def survey_2():
     g.user = current_user
 
-    # get folders for which this user is a member
-    # todo: and for which a survey has not been done this year
-    folders = SharedSpace.query.filter_by(PI_username=current_user.uid_trim()).all()
-    choices=[]
-    for f in folders:
-        found=1
-        for s in f.surveys.all():
-            if s.year == datetime.datetime.utcnow().year:
-                found=0 #so dont include this one
-                break
-        if found:
-            choices.append(f.folder_name)
+    choices = KnownThirdPartySupplier.get_all_names()
+
     choices.append('Other')
 
 
@@ -181,30 +172,30 @@ def survey_2():
         form = Survey2Form(request.form)
 
         if form.validate_on_submit():
-            survey = Survey2(current_user.uid_trim(),alt_email="not a real email")
-            form.populate_obj(survey)
-            survey.group = request.form.get('group_name')
-
-            if SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).count()==0:
-                sharedspace = SharedSpace(current_user.uid_trim(),request.form.get('other_group'),request.form.get('linux_or_windows'))
-                db.session.add(sharedspace)
-                db.session.commit()
-            else:
-                sharedspace = SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).first()
-            survey.shared_space_id = sharedspace.id
-            db.session.add(survey)
-
-            db.session.commit()
+            # survey = Survey2(current_user.uid_trim(),alt_email="not a real email")
+            # form.populate_obj(survey)
+            # survey.group = request.form.get('group_name')
+            #
+            # if SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).count()==0:
+            #     sharedspace = SharedSpace(current_user.uid_trim(),request.form.get('other_group'),request.form.get('linux_or_windows'))
+            #     db.session.add(sharedspace)
+            #     db.session.commit()
+            # else:
+            #     sharedspace = SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).first()
+            # survey.shared_space_id = sharedspace.id
+            # db.session.add(survey)
+            #
+            # db.session.commit()
 
             return redirect(url_for('confirm_ACL',sharedspace_id=sharedspace.id))
         elif request.form.get('has_data')=='N':
-            survey = Survey2(current_user.uid_trim(), alt_email="none required")
-            db.session.add(survey)
-
-            db.session.commit()
+            # survey = Survey2(current_user.uid_trim(), alt_email="none required")
+            # db.session.add(survey)
+            #
+            # db.session.commit()
             return redirect(url_for('index'))
 
-        return render_template('survey/Survey2.html', title='Survey', form=form,groupfield=choices)
+        return render_template('survey/ThirdParty.html', title='Survey', form=form,providers=choices)
     else:
         return redirect(url_for('index'))
 
