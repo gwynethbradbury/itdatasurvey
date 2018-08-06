@@ -190,7 +190,7 @@ def survey_2():
 
             db.session.commit()
             return redirect(url_for('index'))
-
+        print(form.data)
         return render_template('survey/ThirdParty.html', title='Survey', form=form,providers=choices)
     else:
         return redirect(url_for('index'))
