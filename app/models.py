@@ -362,7 +362,7 @@ class ThirdPartyRegister(db.Model):
         self.date = datetime.datetime.utcnow()
         self.year = year
         self.username=username
-        self.uses_third_parties=False
+        self.uses_third_parties='N'
         self.alt_email = alt_email
         if service_user==None or service_user=="":
             self.service_user=username
