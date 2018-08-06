@@ -43,13 +43,13 @@
 					<span class="glyphicon glyphicon-ok pull-left"></span>	Services Survey
 				</a>
 				<br>
-                <p>Shared survey completed for:</p>
+                <p>Third party services survey completed for:</p>
                 <ul>
                     {% for s in s2_details %}
-                        <li>{{ s.group }}, {{ s.year }}</li>
+                        <li>{{ s.service_user }}, {{ s.year }}</li>
                     {% endfor %}
                 </ul>
-				<p>Thanks for completing the Services Survey.</p>
+				<p>Thanks for completing the Services Survey. You may still repeat the survey for further users.</p>
 			{% else %}
 			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Services Survey</a></p>
 			{% endif %}

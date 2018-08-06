@@ -76,6 +76,7 @@ information_types2 = ["HR/Employment related data - CVs/references/etc",
                     "Financial related data - expenses forms, etc.",
                     "Other Student/staff data (photographs,videos, course lists etc)",
                     "Alumni Data (including Photos",
+                    "Personal but Non Uni. Members",
                     "Study Datasets",
                     "Other"]
 
@@ -326,6 +327,7 @@ class InformationAssetInventory(db.Model):
 
 service_types =db.Enum("infrastructure","platform","software","cots","custom_software","outsourced_service_provider","other")
 information_types =db.Enum("financial","hr","student","dev_and_alum","personal_non_uni_members","research","other")
+information_typesx =["hr","financial","student","dev_and_alum","personal_non_uni_members","research","other"]
 
 class ThirdPartyRegister(db.Model):
     __bind_key__ = 'data_survey'
@@ -337,22 +339,92 @@ class ThirdPartyRegister(db.Model):
     year = db.Column(db.Integer,nullable=False,default=2018)
     alt_email = db.Column(db.String(100), nullable=False)
     uses_third_parties = db.Column(db.Enum('Y','N'), default='Y')
+    service_user = db.Column(db.String(100))
 
-    Supplier = db.Column(db.Integer, db.ForeignKey('known_third_party_supplier.id'), nullable=False)
+    Supplier = db.Column(db.Text, default="None",nullable=False)
+    # db.Column(db.Integer, db.ForeignKey('known_third_party_supplier.id'), nullable=True)
 
     description = db.Column(db.String(200),nullable=False)#Description of Service / Usage
-    information_type = db.Column((information_types))# Information Type
-    division = db.Column(db.Enum("social_sci","humanities"))# Division
+    # information_type = db.Column(information_types,default="other")# Information Type
+    information_type = db.Column(db.Text,default="other")# Information Type
+    division = db.Column(db.Enum("social_sci","humanities"),default="social_sci")# Division
     department = "Geography"# Department / Section
-    data_classification = db.Column((data_classes))# Data Classification (see www.infosec.ox.ac.uk)
-    data_volume_records = db.Column(db.Enum("<1000","1000-4999","5000-10k",">10k"))# Data Volume
-    data_compliance = db.Column(db.Enum("Unspecific","Specific"))# Data Compliance
+    data_classification = db.Column((data_classes),default="Private")# Data Classification (see www.infosec.ox.ac.uk)
+    data_volume_records = db.Column(db.Enum("<1000","1000-4999","5000-10k",">10k"),default="<1000")# Data Volume
+    data_compliance = db.Column(db.Enum("Unspecific","Specific"),default="Unspecific")# Data Compliance
     contractual_review = "Adopted supplier's standard  T&Cs.  T&Cs can be changed without notification"# Contractual Review
     assessment = "None/Unknown"# Information Security Team Third Party Security Assessment ouputSupplier
 
-    def __init__(self):
-        pass
+    def __init__(self,
+            username, alt_email,
+            year=datetime.datetime.utcnow().year,service_user=None):
 
+        self.date = datetime.datetime.utcnow()
+        self.year = year
+        self.username=username
+        self.uses_third_parties=False
+        self.alt_email = alt_email
+        if service_user==None or service_user=="":
+            self.service_user=username
+        else:
+            self.service_user=service_user
+
+
+    def get_id(self):
+        return unicode(self.id)
+
+    @staticmethod
+    def has_been_done_by(username, year=None):
+
+        q= ThirdPartyRegister.query.filter(ThirdPartyRegister.username==username)
+        if year:
+            q=q.filter(ThirdPartyRegister.year==year)
+
+        if q.count()>0:
+            return True,q.all()
+
+        return False,[]
+
+
+    def get_output_for_central_services(self):
+        line=""
+        # if self.has_assets and self.is_data_personal:
+        #     line=str.join(',',[
+        #         str(self.id),
+        #         str(self.asset_type),
+        #         str(self.asset_name),
+        #         str(self.asset_owner),
+        #         str(self.other_details),
+        #         str(self.data_classification),
+        #         str(self.data_integrity),
+        #         str(self.data_availability),
+        #         str(self.recovery_time_objective),
+        #         str(self.recovery_point_objective),
+        #     ]) + "\n"
+        return line
+    @staticmethod
+    def get_headers():
+        # return "Asset ID," \
+        #        "Asset Type," \
+        #        "Asset Name," \
+        #        "Asset Owner," \
+        #        "Other Asset Information," \
+        #        "Classification / Confidentiality Level," \
+        #        "Integrity," \
+        #        "Availability," \
+        #        "Recovery Time Objective (RTO)," \
+        #        "Recovery Point Objective (RPO)" \
+        #        "\n"
+        return ""
+    @staticmethod
+    def produce_out_file(filename):
+        # f = open(filename,'w')
+        # q = ThirdPartyRegister.query.all()
+        # f.writelines([ThirdPartyRegister.get_headers()])
+        # for a in q:
+        #     f.writelines([a.get_output_for_central_services()])
+        # f.close()
+        pass
 
 class KnownThirdPartySupplier(db.Model):
     __bind_key__ = 'data_survey'

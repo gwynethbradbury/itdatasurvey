@@ -37,21 +37,21 @@
 
 
 
-                    <div class="form-group">
-                        <label class="control-label" for="has_data">Do you use third party service providers?</label><br>
+                        {{ render_field(form.uses_third_parties) }}
+{#                    <div class="form-group">#}
+{#                        <label class="control-label" for="has_data">Do you use third party service providers?</label><br>#}
                     {#                <ul id="has_data">#}
-                        <input id="has_data-0" name="has_data" type="radio" value="Y" checked> <label for="has_data-0">Yes</label>
-                        <input id="has_data-1" name="has_data" type="radio" value="N"> <label for="has_data-1">No</label>
-                        <a href="{{ url_for('information') }}">I don't know</a>
+{#                        <input id="has_data-0" name="has_data" type="radio" value="Y" checked> <label for="has_data-0">Yes</label>#}
+{#                        <input id="has_data-1" name="has_data" type="radio" value="N"> <label for="has_data-1">No</label>#}
+{#                        <a href="{{ url_for('information') }}">I don't know</a>#}
                     {#                </ul>#}
-                    </div>
+{#                    </div>#}
 
 
                     {{ form.csrf_token }}
                     <div class="further-fields">
 
                         {{ render_field(form.alt_email) }}
-                        {{ render_field(form.uses_third_parties) }}
                         {{ render_field(form.supplier_list) }}
                         {{ render_field(form.description) }}
                         {{ render_field(form.information_type) }}

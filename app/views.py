@@ -6,7 +6,8 @@ from flask import url_for, g, request
 from flask.ext.login import login_user, logout_user, current_user, login_required
 from flask.ext.sqlalchemy import get_debug_queries
 
-from models import InformationAssetInventory as Survey1, SharedSurvey as Survey2, SharedSpace, WebhostingSurvey as Survey3, Website
+from models import InformationAssetInventory as Survey1, SharedSurvey as Survey2
+from models import ThirdPartyRegister, SharedSpace, WebhostingSurvey as Survey3, Website
 from models import KnownThirdPartySupplier
 from forms import Survey1Form, ThirdPartySurvey as Survey2Form, Survey3Form, ConfirmACLForm
 from email import user_notification, forgot_password
@@ -166,33 +167,28 @@ def survey_2():
 
 
     # survey2 can be done a number of times
-    if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]:#  \
-            # and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
+    if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]\
+            and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
 
         form = Survey2Form(request.form)
 
         if form.validate_on_submit():
-            # survey = Survey2(current_user.uid_trim(),alt_email="not a real email")
-            # form.populate_obj(survey)
-            # survey.group = request.form.get('group_name')
-            #
-            # if SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).count()==0:
-            #     sharedspace = SharedSpace(current_user.uid_trim(),request.form.get('other_group'),request.form.get('linux_or_windows'))
-            #     db.session.add(sharedspace)
-            #     db.session.commit()
-            # else:
-            #     sharedspace = SharedSpace.query.filter_by(folder_name=request.form.get('group_name')).first()
-            # survey.shared_space_id = sharedspace.id
-            # db.session.add(survey)
-            #
-            # db.session.commit()
 
-            return redirect(url_for('confirm_ACL',sharedspace_id=sharedspace.id))
+            survey = ThirdPartyRegister(current_user.uid_trim(),alt_email="not a real email")
+            form.populate_obj(survey)
+
+            survey.Supplier = (", ").join(form.supplier_list.data)
+            survey.information_type = (", ").join(form.information_type.data)
+            db.session.add(survey)
+
+            db.session.commit()
+
+            return redirect(url_for('index'))
         elif request.form.get('has_data')=='N':
-            # survey = Survey2(current_user.uid_trim(), alt_email="none required")
-            # db.session.add(survey)
-            #
-            # db.session.commit()
+            survey = ThirdPartyRegister(current_user.uid_trim(), alt_email="none required")
+            db.session.add(survey)
+
+            db.session.commit()
             return redirect(url_for('index'))
 
         return render_template('survey/ThirdParty.html', title='Survey', form=form,providers=choices)
@@ -309,13 +305,14 @@ def index():
     # if user.has_role('superusers'):
     #     return redirect('admin/')
     survey1_done,survey1_details = Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
+    ThirdPartyRegister_survey_done,ThirdPartyRegister_survey_details = ThirdPartyRegister.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
     survey2_done,survey2_details = Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
     survey3_done,survey3_details = Survey3.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)
     return render_template("index.html", title="Home", user=user,
                            s1=survey1_done,
                            s1_year=datetime.datetime.utcnow().year,
-                           s2=survey2_done,
-                           s2_details = survey2_details,
+                           s2=ThirdPartyRegister_survey_done,
+                           s2_details = ThirdPartyRegister_survey_details,
                            s3=survey3_done,
                            s3_details = survey3_details)
 
