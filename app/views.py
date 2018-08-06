@@ -184,7 +184,7 @@ def survey_2():
             db.session.commit()
 
             return redirect(url_for('index'))
-        elif request.form.get('has_data')=='N':
+        elif request.form.get('uses_third_parties')=='N':
             survey = ThirdPartyRegister(current_user.uid_trim(), alt_email="none required")
             db.session.add(survey)
 
