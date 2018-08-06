@@ -364,6 +364,7 @@ class ThirdPartyRegister(db.Model):
         self.username=username
         self.uses_third_parties='N'
         self.alt_email = alt_email
+        self.description="-"
         if service_user==None or service_user=="":
             self.service_user=username
         else:
