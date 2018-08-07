@@ -177,14 +177,14 @@ def survey_2():
         print(form.errors)
         if form.validate_on_submit():
 
-            survey = ThirdPartyRegister(current_user.uid_trim(),alt_email="not a real email")
-            form.populate_obj(survey)
-
-            survey.Supplier = (", ").join(form.supplier_list.data)
-            survey.information_type = (", ").join(form.information_type.data)
-            db.session.add(survey)
-
-            db.session.commit()
+            # survey = ThirdPartyRegister(current_user.uid_trim(),alt_email="not a real email")
+            # form.populate_obj(survey)
+            #
+            # survey.Supplier = (", ").join(form.supplier_list.data)
+            # survey.information_type = (", ").join(form.information_type.data)
+            # db.session.add(survey)
+            #
+            # db.session.commit()
 
             return redirect(url_for('index'))
         elif request.form.get('uses_third_parties')=='N':
