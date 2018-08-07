@@ -44,6 +44,8 @@ def survey_1():
         form = Survey1Form(request.form)
 
         # if request.method == 'POST':
+        print(form.validate())
+        print(form.errors)
         if form.validate_on_submit():
             survey = Survey1(current_user.uid_trim(),alt_email="not a real email")
             form.populate_obj(survey)
