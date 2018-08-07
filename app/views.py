@@ -171,7 +171,8 @@ def survey_2():
             and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
 
         form = Survey2Form(request.form)
-        form.validate()
+        print(form.validate())
+        print(form.errors)
         if form.validate_on_submit():
 
             survey = ThirdPartyRegister(current_user.uid_trim(),alt_email="not a real email")

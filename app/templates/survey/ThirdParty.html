@@ -36,6 +36,7 @@
                 <form method="POST" action="." class="form form-horizontal">
 
 
+                    {{ form.csrf_token }}
 
                         {{ render_field(form.uses_third_parties) }}
 {#                    <div class="form-group">#}
