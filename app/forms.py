@@ -103,27 +103,27 @@ class Survey1Form(Form):
 from models import KnownThirdPartySupplier, information_types2,information_typesx, data_classes2
 class ThirdPartySurvey(Form):
     # Alternative Email
-    alt_email = fields.StringField('Please give an alternative contact email')  # , validators=[DataRequired()])
+    alt_email = fields.StringField('Please give an alternative contact email',validators=fields.validators.Optional())  # , validators=[DataRequired()])
 
 
     uses_third_parties = fields.RadioField("Do you use any third party service providers to store and/or process research data?",
-                                           choices=[('Y','Yes'),('N','No')], default='Y')
+                                           choices=[('Y','Yes'),('N','No')], default='Y',validators=fields.validators.Optional())
 
     supplier_list = fields.SelectMultipleField("Select all suppliers that you use",
-                                          choices=[(a,a) for a in KnownThirdPartySupplier.get_all_names()])
+                                          choices=[(a,a) for a in KnownThirdPartySupplier.get_all_names()],validators=fields.validators.Optional())
 
-    description = fields.TextAreaField("Please describe how you use this service. If you have selected 'Other' from the list, please name any unlisted services:")
+    description = fields.TextAreaField("Please describe how you use this service. If you have selected 'Other' from the list, please name any unlisted services:",validators=fields.validators.Optional())
     information_type = fields.SelectMultipleField("Please select the Information type stored with this service:",
-                                          choices=[(information_types2[i],information_types2[i]) for i in range(len(information_typesx))])
+                                          choices=[(information_types2[i],information_types2[i]) for i in range(len(information_typesx))],validators=fields.validators.Optional())
 
     division = fields.SelectField("Select the division that uses this data:",
-                                  choices=[("social_sci","Social Sciences"), ("humanities","Humanities")])
+                                  choices=[("social_sci","Social Sciences"), ("humanities","Humanities")],validators=fields.validators.Optional())
 
-    data_classification = fields.SelectField("Select the privacy classification for this data:",choices=[(a,a) for a in data_classes2])  # Data Classification (see www.infosec.ox.ac.uk)
+    data_classification = fields.SelectField("Select the privacy classification for this data:",choices=[(a,a) for a in data_classes2],validators=fields.validators.Optional())  # Data Classification (see www.infosec.ox.ac.uk)
     data_volume_records = fields.SelectField("Select the number of personal records stored in this service:",
-                                             choices=[("<1000","<1000"), ("1000-4999","1000-4999"), ("5000-10k","5000-10k"), (">10k",">10k")])  # Data Volume
+                                             choices=[("<1000","<1000"), ("1000-4999","1000-4999"), ("5000-10k","5000-10k"), (">10k",">10k")],validators=fields.validators.Optional())  # Data Volume
     data_compliance = fields.SelectField("Select the type of data compliance required for this service:",
-                                         choices=[("Unspecific","Unspecific"), ("Specific","Specific")])
+                                         choices=[("Unspecific","Unspecific"), ("Specific","Specific")],validators=fields.validators.Optional())
 #
 
 class Survey2Form(Form):
