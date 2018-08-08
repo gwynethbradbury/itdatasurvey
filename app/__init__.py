@@ -7,7 +7,7 @@ from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.mail import Mail
-from flask_wtf.csrf import CSRFProtect
+#from flask_wtf.csrf import CSRFProtect
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -23,7 +23,7 @@ lm.login_view = 'login'
 
 mail = Mail(app)
 
-csrf = CSRFProtect(app)
+#csrf = CSRFProtect(app)
 
 app.secret_key = os.urandom(24)
 app.permanent_session_lifetime = timedelta(minutes=120)
