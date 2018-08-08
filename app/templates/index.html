@@ -28,13 +28,15 @@
 				</a>
 				<br>
 				<p>Thanks for completing the Personal Data Survey, {{ s1_year }}.</p>
+                <p><a href="{{ url_for('survey_1_repeat')}}">Redo survey (this overrides existing data)</a></p>
 			{% else %}
 			<p><a class="btn btn-primary btn-lg btn-block disabled" role="button">Personal Data Survey</a></p>
 			{% endif %}
 		</div>
 
 		<div class="col-md-4">
-			{% if s1 and not s2%}
+			{% if not s2%}
+{#			{% if s1 and not s2%}#}
 				<p><a class="btn btn-primary btn-lg btn-block" href="{{ url_for('survey_2')}}" role="button">Services Survey</a></p>
 				<br>
                 <p>Not completed</p>

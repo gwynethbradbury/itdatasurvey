@@ -117,10 +117,101 @@ def survey_1():
             db.session.commit()
             return redirect(url_for('index'))
 
-        return render_template('survey/Survey1.html', title='Survey', form=form)
+        return render_template('survey/Survey1.html', title='Survey', form=form, action='.')
     else:
         return redirect(url_for('index'))
+@app.route('/survey_1/repeat', methods=['GET', 'POST'])
+# @login_required
+def survey_1_repeat(repeat=False):
+    # survey = Survey1(current_user.uid_trim(), alt_email="not a real email")
+    #
+    # return redirect(url_for('index'))
 
+
+    form = Survey1Form(request.form)
+
+    # if request.method == 'POST':
+    print(form.validate())
+    print(form.errors)
+    if form.validate_on_submit():
+        survey=Survey1.get_most_recent(current_user.uid_trim())
+
+        form.populate_obj(survey)
+
+        if request.form.get("is_data_personal") == 'N1':
+            form.is_data_personal = 'N1'
+            survey.is_data_personal = False
+        else:
+            form.is_data_personal = 'Y1'
+            survey.is_data_personal = True
+
+        if form.has_data.data=='Y':
+            survey.has_assets=1
+        else:
+            survey.has_assets=0
+
+
+        # survey.asset_type = "Information / data sets (digital)"
+        # survey.asset_name = "Not given"
+        # survey.asset_owner = "Not given"
+        # survey.data_classification = "Private"
+        # survey.data_integrity = "Low"
+        # survey.data_availability = "Low"
+        # survey.recovery_time_objective = "within 2 hours"
+        # survey.recovery_point_objectice = "within 2 hours"
+
+        sm = ""
+        for f in request.form.getlist("supply_media"):
+            sm=sm+str(f)+", "
+        survey.supply_media = sm
+
+        sm = ""
+        if request.form.get("is_admin")=='admin':
+            survey.data_type = "Administrative"
+            sm="Admin: "
+            for f in request.form.getlist("admin_datatype"):
+                sm=sm+str(f)+", "
+        else:
+            survey.data_type = "Research"
+            sm="Research: "
+            for f in request.form.getlist("research_datatype"):
+                sm=sm+str(f)+", "
+
+        if survey.is_data_personal:
+            survey.other_details = survey.other_details + form.num_records.data + " records, "
+
+        # survey.file_size_estimate = "Not given"
+        # survey.file_size_final = "Not given"
+
+
+
+        # survey.data_type = "Administrative"
+        # survey.linux_or_windows = "Linux"
+        # survey.home_or_shared = "Home"
+        # survey.is_data_personal = False
+        # # survey.curec_date =
+        # survey.data_source = "me"
+        # survey.license_or_data_source = "Not given"
+
+
+        db.session.add(survey)
+
+        db.session.commit()
+        return redirect(url_for('index'))
+    elif request.form.get('has_data')=='N':
+        survey = Survey1(current_user.uid_trim(), alt_email="none required")
+        db.session.add(survey)
+
+        db.session.commit()
+        return redirect(url_for('index'))
+
+    return render_template('survey/Survey1.html', title='Survey', form=form, action= url_for('survey_1_repeat') )
+
+
+# @app.route('/survey_1/repeat', methods=['GET', 'POST'])
+# # @login_required
+# def survey_1_repeat(repeat=False):
+#     return survey_1(repeat=True)
 
 @app.route('/survey_2/', methods=['GET', 'POST'])
 # @login_required
@@ -169,22 +260,100 @@ def survey_2():
 
 
     # survey2 can be done a number of times
-    if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]\
-            and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
+    # if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
+    if True:
 
         form = Survey2Form(request.form)
         print(form.validate())
         print(form.errors)
         if form.validate_on_submit():
 
-            # survey = ThirdPartyRegister(current_user.uid_trim(),alt_email="not a real email")
-            # form.populate_obj(survey)
-            #
-            # survey.Supplier = (", ").join(form.supplier_list.data)
-            # survey.information_type = (", ").join(form.information_type.data)
-            # db.session.add(survey)
-            #
-            # db.session.commit()
+            survey = ThirdPartyRegister(current_user.uid_trim(),alt_email="not a real email")
+            form.populate_obj(survey)
+
+            survey.Supplier = (", ").join(form.supplier_list.data)
+            survey.information_type = (", ").join(form.information_type.data)
+            db.session.add(survey)
+
+            db.session.commit()
+
+            return redirect(url_for('index'))
+        elif request.form.get('uses_third_parties')=='N':
+            survey = ThirdPartyRegister(current_user.uid_trim(), alt_email="none required")
+            db.session.add(survey)
+
+            db.session.commit()
+            return redirect(url_for('index'))
+        print(form.data)
+        return render_template('survey/ThirdParty.html', title='Survey', form=form,providers=choices)
+    else:
+        return redirect(url_for('index'))\
+
+# todo: finish
+@app.route('/shared_survey/', methods=['GET', 'POST'])
+# @login_required
+def shared_survey():
+    g.user = current_user
+
+    choices = KnownThirdPartySupplier.get_all_names()
+
+    choices.append('Other')
+
+
+    # # groups
+    # group = fields.SelectField('Group name',
+    #                             choices=[('15_20deg_water_resources','15_20deg_water_resources'),
+    #                                      ('arve','arve'),
+    #                                      ('beta-diversity','beta-diversity'),
+    #                                      ('carina','carina'),
+    #                                      ('clarify','clarify'),
+    #                                      ('ComputationalScience','ComputationalScience'),
+    #                                      ('do4models','do4models'),
+    #                                      ('EcosystemsLab_TLS','EcosystemsLab_TLS'),
+    #                                      ('enso_flavours','enso_flavours'),
+    #                                      ('fennec','fennec'),
+    #                                      ('gem','gem'),
+    #                                      ('ghm','ghm'),
+    #                                      ('gwava','gwava'),
+    #                                      ('hiasa','hiasa'),
+    #                                      ('impala','impala'),
+    #                                      ('leaf-gpu','leaf-gpu'),
+    #                                      ('leap','leap'),
+    #                                      ('marius','marius'),
+    #                                      ('mistral','mistral'),
+    #                                      ('mooredrought','mooredrought'),
+    #                                      ('okvbasin_sdm','okvbasin_sdm'),
+    #                                      ('pollcurb','pollcurb'),
+    #                                      ('reach','reach'),
+    #                                      ('river-routing','river-routing'),
+    #                                      ('seviri_dust','seviri_dust'),
+    #                                      ('sfp-datascience','sfp-datascience'),
+    #                                      ('soge_routines','soge_routines'),
+    #                                      ('titan','titan'),
+    #                                      ('tnc','tnc'),
+    #                                      ('umfula','umfula'),
+    #                                      ('weather_attribution','weather_attribution'),
+    #                                      ('Other','Other')])
+
+
+    # survey2 can be done a number of times
+    # if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]\
+    #         and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
+    if not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
+
+        form = Survey2Form(request.form)
+        print(form.validate())
+        print(form.errors)
+        if form.validate_on_submit():
+
+            survey = ThirdPartyRegister(current_user.uid_trim(),alt_email="not a real email")
+            form.populate_obj(survey)
+
+            survey.Supplier = (", ").join(form.supplier_list.data)
+            survey.information_type = (", ").join(form.information_type.data)
+            db.session.add(survey)
+
+            db.session.commit()
 
             return redirect(url_for('index'))
         elif request.form.get('uses_third_parties')=='N':

@@ -285,6 +285,15 @@ class InformationAssetInventory(db.Model):
 
         return False,[]
 
+    @staticmethod
+    def get_most_recent(username):
+
+        q= InformationAssetInventory.query.filter(InformationAssetInventory.username==username)
+        year=datetime.datetime.utcnow().year
+        q=q.filter(InformationAssetInventory.year==year)
+
+        return q.first()
+
 
     def get_output_for_central_services(self):
         line=""
