@@ -128,7 +128,7 @@ def survey_1_repeat(repeat=False):
     # return redirect(url_for('index'))
 
 
-    form = Survey1Form(request.form,csrf_enabled=False)
+    form = Survey1Form(request.form)
 
     # if request.method == 'POST':
     if form.validate_on_submit():
@@ -339,7 +339,7 @@ def shared_survey():
     #         and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
     if not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
 
-        form = Survey2Form(request.form,csrf_enabled=False)
+        form = Survey2Form(request.form)
         print(form.validate())
         print(form.errors)
         if form.validate_on_submit():
