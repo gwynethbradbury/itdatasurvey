@@ -3,8 +3,8 @@
 from flask import render_template, flash, redirect
 from flask import url_for, g, request
 
-from flask.ext.login import login_user, logout_user, current_user, login_required
-from flask.ext.sqlalchemy import get_debug_queries
+from flask_login import login_user, logout_user, current_user, login_required
+from flask_sqlalchemy import get_debug_queries
 
 from models import InformationAssetInventory as Survey1, SharedSurvey as Survey2
 from models import ThirdPartyRegister, SharedSpace, WebhostingSurvey as Survey3, Website

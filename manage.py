@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from flask.ext.script import Manager
+from flask_script import Manager
 from app import app, db
 
 from app.models import InformationAssetInventory as PersonalSurvey,SharedSurvey,\
     SharedSpace,Website,ThirdPartyRegister,KnownThirdPartySupplier
 
-from flask.ext.migrate import Migrate, MigrateCommand
+from flask_migrate import Migrate, MigrateCommand
 import os
 # ALEMBIC
 migrate = Migrate(app, db)

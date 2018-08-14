@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mixins import CRUDMixin
-from flask.ext.login import UserMixin
+from flask_login import UserMixin
 
 from app import db
 
