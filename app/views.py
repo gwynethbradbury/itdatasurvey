@@ -298,45 +298,6 @@ def shared_survey():
     choices.append('Other')
 
 
-    # # groups
-    # group = fields.SelectField('Group name',
-    #                             choices=[('15_20deg_water_resources','15_20deg_water_resources'),
-    #                                      ('arve','arve'),
-    #                                      ('beta-diversity','beta-diversity'),
-    #                                      ('carina','carina'),
-    #                                      ('clarify','clarify'),
-    #                                      ('ComputationalScience','ComputationalScience'),
-    #                                      ('do4models','do4models'),
-    #                                      ('EcosystemsLab_TLS','EcosystemsLab_TLS'),
-    #                                      ('enso_flavours','enso_flavours'),
-    #                                      ('fennec','fennec'),
-    #                                      ('gem','gem'),
-    #                                      ('ghm','ghm'),
-    #                                      ('gwava','gwava'),
-    #                                      ('hiasa','hiasa'),
-    #                                      ('impala','impala'),
-    #                                      ('leaf-gpu','leaf-gpu'),
-    #                                      ('leap','leap'),
-    #                                      ('marius','marius'),
-    #                                      ('mistral','mistral'),
-    #                                      ('mooredrought','mooredrought'),
-    #                                      ('okvbasin_sdm','okvbasin_sdm'),
-    #                                      ('pollcurb','pollcurb'),
-    #                                      ('reach','reach'),
-    #                                      ('river-routing','river-routing'),
-    #                                      ('seviri_dust','seviri_dust'),
-    #                                      ('sfp-datascience','sfp-datascience'),
-    #                                      ('soge_routines','soge_routines'),
-    #                                      ('titan','titan'),
-    #                                      ('tnc','tnc'),
-    #                                      ('umfula','umfula'),
-    #                                      ('weather_attribution','weather_attribution'),
-    #                                      ('Other','Other')])
-
-
-    # survey2 can be done a number of times
-    # if Survey1.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0]\
-    #         and not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
     if not Survey2.has_been_done_by(current_user.uid_trim(),datetime.datetime.utcnow().year)[0] :
 
         form = Survey2Form(request.form)
@@ -521,36 +482,6 @@ def flash_errors(form):
                 getattr(form, field).label.text, error))
 
 
-# @app.route('/admin')
-# # @login_required
-# # @admin_required
-# def admin():
-#     users = []#User.query.filter_by(role=0)
-#     return render_template('admin/index.html', title="Admin", users=users)
-
-
-# @app.route('/admin_survey1/')
-# # @login_required
-# # @admin_required
-# def admin_survey1():
-#     surveys = Survey1.query.all()
-#     return render_template('admin/partials/survey1.html', title='Admin Personal Survey', surveys=surveys)
-#
-#
-# @app.route('/admin_survey2/')
-# # @login_required
-# # @admin_required
-# def admin_survey2():
-#     surveys = Survey2.query.all()
-#     return render_template('admin/partials/survey2.html', title='Admin Shared Survey', surveys=surveys)
-#
-#
-# @app.route('/admin_shared_spaces/')
-# # @login_required
-# # @admin_required
-# def admin_shared_spaces():
-#     spaces = SharedSpace.query.all()
-#     return render_template('admin/partials/shared_spaces.html', title='Admin Shared Spaces', surveys=spaces)
 
 
 
@@ -591,10 +522,29 @@ class MyModelView(ModelView):
 
 
 
+from flask import send_from_directory
+@app.route('/InformationAssetInventory', methods=['GET', 'POST'])
+def download_1():
+    from app.models import InformationAssetInventory
+    filename='InformationAssetInventory.csv'
+    InformationAssetInventory.produce_out_file(os.path.join(app.config['OUTPUT_FOLDER'], filename))
+    return send_from_directory(directory=app.config['OUTPUT_FOLDER'], filename=filename)
+
+    # return redirect(url_for('index'))
+
+@app.route('/ThirdPartyRegister', methods=['GET', 'POST'])
+def download_2():
+    from app.models import ThirdPartyRegister
+    filename='ThirdPartyRegister.csv'
+    ThirdPartyRegister.produce_out_file(os.path.join(app.config['OUTPUT_FOLDER'], filename))
+    return send_from_directory(directory=app.config['OUTPUT_FOLDER'], filename=filename)
+
+    # return redirect(url_for('index'))
+
 admin = Admin(app, name='ADMIN',
               template_mode='bootstrap3',
               index_view=MyAdminIndexView())
 
 admin.add_view(MyModelView(Survey1, db.session))
-admin.add_view(MyModelView(Survey2, db.session))
-admin.add_view(MyModelView(SharedSpace, db.session))
+admin.add_view(MyModelView(ThirdPartyRegister, db.session))
+# admin.add_view(MyModelView(SharedSpace, db.session))

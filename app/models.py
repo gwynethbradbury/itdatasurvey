@@ -398,43 +398,51 @@ class ThirdPartyRegister(db.Model):
 
     def get_output_for_central_services(self):
         line=""
-        # if self.has_assets and self.is_data_personal:
-        #     line=str.join(',',[
-        #         str(self.id),
-        #         str(self.asset_type),
-        #         str(self.asset_name),
-        #         str(self.asset_owner),
-        #         str(self.other_details),
-        #         str(self.data_classification),
-        #         str(self.data_integrity),
-        #         str(self.data_availability),
-        #         str(self.recovery_time_objective),
-        #         str(self.recovery_point_objective),
-        #     ]) + "\n"
+        if self.uses_third_parties:
+            line=str.join(',',[
+                str(self.id),
+                str(self.Supplier),
+                str(self.description),
+                "unknown",
+                str(self.information_type),
+                str(self.division),
+                str(self.department),
+                str(self.service_user) + " - " +(self.alt_email),
+                str(self.data_classification),
+                str(self.data_volume_records),
+                "uknown",
+                str(self.data_compliance),
+                str(self.contractual_review),
+                " ",
+            ]) + "\n"
         return line
     @staticmethod
     def get_headers():
-        # return "Asset ID," \
-        #        "Asset Type," \
-        #        "Asset Name," \
-        #        "Asset Owner," \
-        #        "Other Asset Information," \
-        #        "Classification / Confidentiality Level," \
-        #        "Integrity," \
-        #        "Availability," \
-        #        "Recovery Time Objective (RTO)," \
-        #        "Recovery Point Objective (RPO)" \
-        #        "\n"
+        return "Asset ID," \
+               "Supplier," \
+               "Description of Service / Usage," \
+               "Type of Service," \
+               "Information Type," \
+               "Division," \
+               "Department / Section," \
+               "Service Owner email," \
+               "Data Classification (see www.infosec.ox.ac.uk)," \
+               "Data Volume," \
+               "Data Location," \
+               "Data Compliance," \
+               "Contractual Review," \
+               "Information Security Team Third Party Security Assessment ouput" \
+               "\n"
         return ""
     @staticmethod
     def produce_out_file(filename):
-        # f = open(filename,'w')
-        # q = ThirdPartyRegister.query.all()
-        # f.writelines([ThirdPartyRegister.get_headers()])
-        # for a in q:
-        #     f.writelines([a.get_output_for_central_services()])
-        # f.close()
-        pass
+        f = open(filename,'w')
+        q = ThirdPartyRegister.query.all()
+        f.writelines([ThirdPartyRegister.get_headers()])
+        for a in q:
+            f.writelines([a.get_output_for_central_services()])
+        f.close()
+
 
 class KnownThirdPartySupplier(db.Model):
     __bind_key__ = 'data_survey'

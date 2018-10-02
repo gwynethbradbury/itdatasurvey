@@ -19,8 +19,9 @@ manager.add_option('-c', '--config', dest='config', required=False)
 
 @manager.command
 def write_output():
-    from app.models import InformationAssetInventory
-    InformationAssetInventory.produce_out_file(os.path.join(app.config['OUTPUT_FOLDER'], 'file.csv'))
+    from app.models import InformationAssetInventory, ThirdPartyRegister
+    InformationAssetInventory.produce_out_file(os.path.join(app.config['OUTPUT_FOLDER'], 'InformationAssetInventory.csv'))
+    ThirdPartyRegister.produce_out_file(os.path.join(app.config['OUTPUT_FOLDER'], 'ThirdPartyRegister.csv'))
 
 
 @manager.command
@@ -85,17 +86,17 @@ def initdb():
 
 
 
-# if __name__ == "__main__":
-#     app.run(port=5006)
+if __name__ == "__main__":
+    app.run(port=5006)
 
 
 
 
 
 manager.add_command('db', MigrateCommand)
-if __name__ == '__main__':
-    # initdb()
-    manager.run()
+# if __name__ == '__main__':
+#     # initdb()
+#     manager.run()
 
 
 # initialise:
