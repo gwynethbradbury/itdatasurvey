@@ -523,7 +523,7 @@ class MyModelView(ModelView):
 
 
 from flask import send_from_directory
-@app.route('/InformationAssetInventory', methods=['GET', 'POST'])
+@app.route('/InformationAssetInventory/', methods=['GET', 'POST'])
 def download_1():
     from app.models import InformationAssetInventory
     filename='InformationAssetInventory.csv'
@@ -532,7 +532,7 @@ def download_1():
 
     # return redirect(url_for('index'))
 
-@app.route('/ThirdPartyRegister', methods=['GET', 'POST'])
+@app.route('/ThirdPartyRegister/', methods=['GET', 'POST'])
 def download_2():
     from app.models import ThirdPartyRegister
     filename='ThirdPartyRegister.csv'
