@@ -86,17 +86,17 @@ def initdb():
 
 
 
-if __name__ == "__main__":
-    app.run(port=5006)
+# if __name__ == "__main__":
+#     app.run(port=5006)
 
 
 
 
 
 manager.add_command('db', MigrateCommand)
-# if __name__ == '__main__':
-#     # initdb()
-#     manager.run()
+if __name__ == '__main__':
+    # initdb()
+    manager.run()
 
 
 # initialise:
